@@ -1,7 +1,10 @@
 package ru.cft.template.api.dto;
 
+import lombok.Builder;
+
 import java.time.LocalDate;
 
+@Builder
 public record UserDTO(
         Long id,
         String firstName,

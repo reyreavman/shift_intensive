@@ -1,4 +1,4 @@
-package ru.cft.template;
+package ru.cft.template.common;
 
 public class Paths {
     public static final String BASIC_PATH = "/kartoshka-api/";
