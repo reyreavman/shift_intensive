@@ -75,7 +75,6 @@ public class User {
     private LocalDateTime registrationDateTime;
 
     @Column(name = "c_lastUpdateDateTime")
-    @NotBlank
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime lastUpdateDateTime;
 }
