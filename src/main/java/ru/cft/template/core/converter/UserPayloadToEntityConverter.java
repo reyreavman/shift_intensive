@@ -2,8 +2,9 @@ package ru.cft.template.core.converter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
-import ru.cft.template.common.PasswordHasherStub;
+import org.springframework.stereotype.Component;
 import ru.cft.template.api.payload.NewUserPayload;
+import ru.cft.template.common.PasswordHasherStub;
 import ru.cft.template.core.entity.User;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
+@Component
 public class UserPayloadToEntityConverter implements Converter<NewUserPayload, User> {
     private final PasswordHasherStub passwordHasherStub = null;
     @Override
@@ -23,7 +25,7 @@ public class UserPayloadToEntityConverter implements Converter<NewUserPayload, U
                 .phoneNumber(userPayload.phoneNumber())
                 .email(userPayload.email())
                 .birthdate(LocalDate.parse(userPayload.birthdate(), DateTimeFormatter.ISO_DATE))
-                .passwordHash(passwordHasherStub.hash(userPayload.password()))
+                .passwordHash(userPayload.password())
                 .registrationDateTime(LocalDateTime.now())
                 .lastUpdateDateTime(null)
                 .build();
