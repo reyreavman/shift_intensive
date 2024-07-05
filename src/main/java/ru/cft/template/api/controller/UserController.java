@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.cft.template.common.Paths;
 import ru.cft.template.api.dto.UserDTO;
 import ru.cft.template.api.payload.NewUserPayload;
 import ru.cft.template.api.payload.PatchUserPayload;
-import ru.cft.template.core.exception.EmptyResultDataAccessException;
+import ru.cft.template.common.Paths;
 import ru.cft.template.core.exception.MultipleParamsException;
 import ru.cft.template.core.service.user.UserService;
 
@@ -34,11 +33,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody NewUserPayload userPayload, UriComponentsBuilder uriComponentsBuilder) {
         UserDTO userDTO = this.userService.createUser(userPayload);
-        return ResponseEntity
-                .created(uriComponentsBuilder
-                        .replacePath(Paths.USERS_PATH.concat("/{userId}"))
-                        .build(Map.of("userId", userDTO.id())))
-                .body(userDTO);
+        return ResponseEntity.created(uriComponentsBuilder.replacePath(Paths.USERS_PATH.concat("/{userId}")).build(Map.of("userId", userDTO.id()))).body(userDTO);
     }
 
     @PatchMapping
@@ -49,16 +44,11 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getUsersInfo(@RequestParam Map<String, String> params) {
-        Supplier<Stream<Map.Entry<String, String>>> supplier = () -> params.entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue()));
-        if (supplier.get().count() > 1) throw new MultipleParamsException(supplier.get().map(Map.Entry::getKey).toList());
+        Supplier<Stream<Map.Entry<String, String>>> paramsStreamSupplier = () -> params.entrySet().stream().filter(Objects::nonNull);
+        if (paramsStreamSupplier.get().count() > 1) throw new MultipleParamsException(paramsStreamSupplier.get().map(Map.Entry::getKey).toList());
 
-        try {
-            if (Objects.nonNull(params.get("id"))) return ResponseEntity.ok().body(this.userService.findUserById(Long.parseLong(params.get("id"))));
-            else if (Objects.nonNull(params.get("email"))) return ResponseEntity.ok().body(this.userService.findUserByEmail(params.get("email")));
-            else if (Objects.nonNull(params.get("phoneNumber"))) return ResponseEntity.ok().body(this.userService.findUserByPhoneNumber(params.get("phoneNumber")));
-        } catch (EmptyResultDataAccessException ex) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(this.userService.findAllUsers());
+        if (paramsStreamSupplier.get().findAny().isEmpty()) return ResponseEntity.ok(this.userService.findAllUsers());
+        if (Objects.nonNull(params.get("id"))) return ResponseEntity.ok().body(this.userService.findUserById(Long.parseLong(params.get("id"))));
+        return ResponseEntity.ok().body(this.userService.findUserByPhoneNumber(params.get("phoneNumber")));
     }
 }

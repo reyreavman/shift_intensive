@@ -5,12 +5,14 @@ import ru.cft.template.api.dto.UserDTO;
 import ru.cft.template.api.payload.NewUserPayload;
 import ru.cft.template.api.payload.PatchUserPayload;
 
+import java.util.List;
+
 public interface UserService {
     UserDTO createUser(@Valid NewUserPayload userPayload);
 
-    UserDTO patchUser(PatchUserPayload userPayload);
+    UserDTO patchUser(@Valid PatchUserPayload userPayload);
 
-    Iterable<UserDTO> findAllUsers();
+    List<UserDTO> findAllUsers();
 
     UserDTO findUserById(Long id);
 
