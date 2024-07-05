@@ -13,3 +13,5 @@ spring:
         enabled: true
         locations:
           - db.migration
+        encoding: UTF-8
+        baselineOnMigrate: true
