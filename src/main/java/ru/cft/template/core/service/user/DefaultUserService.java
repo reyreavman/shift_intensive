@@ -2,7 +2,8 @@ package ru.cft.template.core.service.user;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.cft.template.api.dto.UserDTO;
@@ -15,19 +16,21 @@ import ru.cft.template.core.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Validated
 @Service
 @RequiredArgsConstructor
 public class DefaultUserService implements UserService {
     private final UserRepository userRepository;
-    private final DefaultConversionService conversionService;
+
+    private final ConversionService conversionService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDTO createUser(@Valid NewUserPayload userPayload) {
-        User savedUser = this.userRepository.save(Objects.requireNonNull(this.conversionService.convert(userPayload, User.class)));
-        return this.conversionService.convert(savedUser, UserDTO.class);
+        User user = this.conversionService.convert(userPayload, User.class);
+        user.setPasswordHash(this.passwordEncoder.encode(user.getPasswordHash()));
+        return this.conversionService.convert(this.userRepository.save(user), UserDTO.class);
     }
 
     @Override
