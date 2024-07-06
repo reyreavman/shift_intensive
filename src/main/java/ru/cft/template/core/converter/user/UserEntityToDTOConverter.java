@@ -1,4 +1,4 @@
-package ru.cft.template.core.converter;
+package ru.cft.template.core.converter.user;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

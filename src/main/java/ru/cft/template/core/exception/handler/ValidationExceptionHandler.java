@@ -1,4 +1,4 @@
-package ru.cft.template.core.handler;
+package ru.cft.template.core.exception.handler;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
