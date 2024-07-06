@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:12:///walletTests?TC_DAEMON=true
+    username: walletTests
+    password: walletTests
