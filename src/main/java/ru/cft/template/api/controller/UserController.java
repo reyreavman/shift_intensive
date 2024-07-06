@@ -1,7 +1,6 @@
 package ru.cft.template.api.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,7 +22,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-@Slf4j
 @RestController
 @RequestMapping(Paths.USERS_PATH)
 @RequiredArgsConstructor
@@ -33,7 +31,11 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody NewUserPayload userPayload, UriComponentsBuilder uriComponentsBuilder) {
         UserDTO userDTO = this.userService.createUser(userPayload);
-        return ResponseEntity.created(uriComponentsBuilder.replacePath(Paths.USERS_PATH.concat("/{userId}")).build(Map.of("userId", userDTO.id()))).body(userDTO);
+        return ResponseEntity.created(
+                        uriComponentsBuilder
+                                .replacePath(Paths.USERS_PATH.concat("/{userId}"))
+                                .build(Map.of("userId", userDTO.id())))
+                .body(userDTO);
     }
 
     @PatchMapping
@@ -44,11 +46,14 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getUsersInfo(@RequestParam Map<String, String> params) {
-        Supplier<Stream<Map.Entry<String, String>>> paramsStreamSupplier = () -> params.entrySet().stream().filter(Objects::nonNull);
-        if (paramsStreamSupplier.get().count() > 1) throw new MultipleParamsException(paramsStreamSupplier.get().map(Map.Entry::getKey).toList());
+        Supplier<Stream<Map.Entry<String, String>>> paramsSupplier = () -> params.entrySet().stream().filter(Objects::nonNull);
+        if (paramsSupplier.get().count() > 1)
+            throw new MultipleParamsException(paramsSupplier.get().map(Map.Entry::getKey).toList());
 
-        if (paramsStreamSupplier.get().findAny().isEmpty()) return ResponseEntity.ok(this.userService.findAllUsers());
-        if (Objects.nonNull(params.get("id"))) return ResponseEntity.ok().body(this.userService.findUserById(Long.parseLong(params.get("id"))));
+        if (paramsSupplier.get().findAny().isEmpty())
+            return ResponseEntity.ok(this.userService.findAllUsers());
+        if (Objects.nonNull(params.get("id")))
+            return ResponseEntity.ok().body(this.userService.findUserById(Long.parseLong(params.get("id"))));
         return ResponseEntity.ok().body(this.userService.findUserByPhoneNumber(params.get("phoneNumber")));
     }
 }
