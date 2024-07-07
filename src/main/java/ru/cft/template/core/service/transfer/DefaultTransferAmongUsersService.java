@@ -99,8 +99,8 @@ public class DefaultTransferAmongUsersService implements TransferAmongUsersServi
     @Override
     public List<TransferAmongUsersDataDTO> findAllTransfersByUserId(Long userId) {
         Stream<TransferAmongUsers> allUserTransfers = Stream.concat(
-                this.transferRepository.findAllBySenderId(userId).stream(),
-                this.transferRepository.findAllByRecipientId(userId).stream()
+                this.transferRepository.findAllBySenderWalletId(userId).stream(),
+                this.transferRepository.findAllByRecipientWalletId(userId).stream()
         );
         return allUserTransfers.map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class)).toList();
     }
@@ -122,11 +122,11 @@ public class DefaultTransferAmongUsersService implements TransferAmongUsersServi
     @Override
     public List<TransferAmongUsersDataDTO> findTransfersByDirectionType(Long userId, TransferDirectionType type) {
         if (type.equals(TransferDirectionType.INCOMING))
-            return this.transferRepository.findAllByRecipientId(userId)
+            return this.transferRepository.findAllByRecipientWalletId(userId)
                     .stream()
                     .map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class))
                     .toList();
-        return this.transferRepository.findAllBySenderId(userId)
+        return this.transferRepository.findAllBySenderWalletId(userId)
                 .stream()
                 .map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class))
                 .toList();
@@ -135,12 +135,12 @@ public class DefaultTransferAmongUsersService implements TransferAmongUsersServi
     @Override
     public List<TransferAmongUsersDataDTO> findTransfersByDirectionTypeAndStatus(Long userId, TransferDirectionType type, TransferStatus status) {
         if (type.equals(TransferDirectionType.INCOMING))
-            return this.transferRepository.findAllByRecipientId(userId)
+            return this.transferRepository.findAllByRecipientWalletId(userId)
                     .stream()
                     .filter(transfer -> transfer.getStatus().equals(status))
                     .map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class))
                     .toList();
-        return this.transferRepository.findAllBySenderId(userId)
+        return this.transferRepository.findAllBySenderWalletId(userId)
                 .stream()
                 .filter(transfer -> transfer.getStatus().equals(status))
                 .map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class))

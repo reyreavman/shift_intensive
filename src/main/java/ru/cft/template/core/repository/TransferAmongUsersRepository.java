@@ -9,7 +9,7 @@ import java.util.List;
 public interface TransferAmongUsersRepository extends CrudRepository<TransferAmongUsers, Long> {
     List<TransferAmongUsers> findAllByStatus(TransferStatus status);
 
-    List<TransferAmongUsers> findAllBySenderId(Long id);
+    List<TransferAmongUsers> findAllBySenderWalletId(Long id);
 
-    List<TransferAmongUsers> findAllByRecipientId(Long id);
+    List<TransferAmongUsers> findAllByRecipientWalletId(Long id);
 }
