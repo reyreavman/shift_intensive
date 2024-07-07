@@ -24,7 +24,7 @@ public class Wallet {
     @MapsId
     private User user;
 
-    @Column(name = "c_balance", columnDefinition = "integer default 100")
+    @Column(name = "c_balance", columnDefinition = "long not null default 100")
     @NotNull
     private Long balance;
 
