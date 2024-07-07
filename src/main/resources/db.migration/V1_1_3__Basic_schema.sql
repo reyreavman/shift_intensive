@@ -7,4 +7,4 @@ create table if not exists wallet.transfers_among_users (
     c_amount            int not null check (c_amount > 0),
     c_status            transferStatus not null,
     c_dateTime          timestamp not null default current_timestamp
-)
+);

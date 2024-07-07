@@ -21,7 +21,7 @@ public class RequestExceptionHandler {
     public ResponseEntity<MultipleParamsErrorResponse> handleMultipleParamsException(MultipleParamsException e) {
         final List<Param> paramList = e.getParamsList().stream()
                 .map(Param::new).toList();
-        return ResponseEntity.badRequest().body(new MultipleParamsErrorResponse(HttpStatus.BAD_REQUEST, "Передано избыточное количество параметров. Передайте только один из параметров.", paramList));
+        return ResponseEntity.badRequest().body(new MultipleParamsErrorResponse(HttpStatus.BAD_REQUEST, "Передано избыточное количество параметров.", paramList));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
