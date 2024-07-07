@@ -24,29 +24,28 @@ insert into wallet.users (c_first_name, c_middle_name, c_last_name, c_phone_numb
 
 
 create table if not exists wallet.wallets (
-    id                int primary key references wallet.users(id),
+    user_id                int primary key references wallet.users(id),
     c_balance         int not null default 100
 );
 
-insert into wallet.wallets (id) values
+insert into wallet.wallets (user_id) values
     (1),
     (2),
     (3),
     (4),
     (5);
 
-create type transferStatus as enum ('SUCCESSFUL', 'FAILED');
 
 create table if not exists wallet.transfers_among_users (
     id                  serial primary key,
-    c_senderId          int not null references wallet.users(id),
-    c_recipientId       int not null references wallet.users(id),
+    c_sender_id          int not null references wallet.users(id),
+    c_recipient_id       int not null references wallet.users(id),
     c_amount            int not null check (c_amount > 0),
-    c_status            transferStatus not null,
-    c_dateTime          timestamp default null
+    c_status            varchar not null,
+    c_date_time          timestamp default null
 );
 
-insert into wallet.transfers_among_users (c_senderId, c_recipientId, c_amount, c_status, c_dateTime) values
+insert into wallet.transfers_among_users (c_sender_id, c_recipient_id, c_amount, c_status) values
     (1, 2, 50, 'SUCCESSFUL'),
     (3, 4, 20, 'FAILED'),
     (2, 1, 75, 'SUCCESSFUL'),
