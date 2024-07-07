@@ -6,8 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.cft.template.core.exception.EntityNotFoundException;
+import ru.cft.template.core.exception.NotEnoughMoneyException;
+import ru.cft.template.core.exception.SelfTransferException;
 import ru.cft.template.core.exception.common.Violation;
 import ru.cft.template.core.exception.responseWrapper.EntityNotFoundErrorResponse;
+import ru.cft.template.core.exception.responseWrapper.NotEnoughMoneyErrorResponse;
+import ru.cft.template.core.exception.responseWrapper.SelfTransferErrorResponse;
 import ru.cft.template.core.exception.responseWrapper.ValidationErrorResponse;
 
 import java.time.format.DateTimeParseException;
@@ -29,6 +33,16 @@ public class ValidationExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<EntityNotFoundErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
-        return ResponseEntity.badRequest().body(new EntityNotFoundErrorResponse(HttpStatus.BAD_REQUEST, "Nothing found for these parameters.", e.getEntityClassName(), e.getSelectedParamsValues()));
+        return ResponseEntity.badRequest().body(new EntityNotFoundErrorResponse(HttpStatus.BAD_REQUEST, "Ничего не найдено для данных параметров", e.getEntityClassName(), e.getSelectedParamsValues()));
+    }
+
+    @ExceptionHandler(SelfTransferException.class)
+    public ResponseEntity<SelfTransferErrorResponse> handleSelfTransferException(SelfTransferException e) {
+        return ResponseEntity.badRequest().body(new SelfTransferErrorResponse(HttpStatus.BAD_REQUEST, "Попытка перевода денег на свой счет.", e.getSenderId(), e.getRecipientId()));
+    }
+
+    @ExceptionHandler(NotEnoughMoneyException.class)
+    public ResponseEntity<NotEnoughMoneyErrorResponse> handleNotEnoughMoneyException(NotEnoughMoneyException e) {
+        return ResponseEntity.badRequest().body(new NotEnoughMoneyErrorResponse(HttpStatus.BAD_REQUEST, "Ошибка перевода - недостаточно средств.", e.getSenderId(), e.getBalance(), e.getTransferAmount()));
     }
 }
