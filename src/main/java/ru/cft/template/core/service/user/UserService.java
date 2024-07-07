@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserService {
     UserDTO createUser(@Valid NewUserPayload userPayload);
 
-    UserDTO patchUser(@Valid PatchUserPayload userPayload);
+    UserDTO patchUser(Long id, @Valid PatchUserPayload userPayload);
 
     List<UserDTO> findAllUsers();
 

@@ -38,9 +38,12 @@ public class UserController {
                 .body(userDTO);
     }
 
+    /*
+    После настройки секьюрити requestParam отсюда уйдет
+    */
     @PatchMapping
-    public ResponseEntity<UserDTO> patchUser(@RequestBody PatchUserPayload userPayload) {
-        UserDTO userDTO = this.userService.patchUser(userPayload);
+    public ResponseEntity<UserDTO> patchUser(@RequestParam("id") long id, @RequestBody PatchUserPayload userPayload) {
+        UserDTO userDTO = this.userService.patchUser(id, userPayload);
         return ResponseEntity.ok().body(userDTO);
     }
 
