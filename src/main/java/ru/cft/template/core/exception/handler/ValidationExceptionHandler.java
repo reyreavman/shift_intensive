@@ -28,7 +28,7 @@ public class ValidationExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<EntityNotFoundErrorResponse> handleNoSuchElementException(EntityNotFoundException e) {
-        return ResponseEntity.badRequest().body(new EntityNotFoundErrorResponse(HttpStatus.BAD_REQUEST, "По данным параметрам ничего не найдено.", e.getEntityClassName(), e.getSelectedParamsValues()));
+    public ResponseEntity<EntityNotFoundErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
+        return ResponseEntity.badRequest().body(new EntityNotFoundErrorResponse(HttpStatus.BAD_REQUEST, "Nothing found for these parameters.", e.getEntityClassName(), e.getSelectedParamsValues()));
     }
 }
