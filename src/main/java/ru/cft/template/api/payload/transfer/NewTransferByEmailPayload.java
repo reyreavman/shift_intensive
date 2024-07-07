@@ -13,6 +13,6 @@ public record NewTransferByEmailPayload(
         @NotNull(message = "{wallet.transfers.create.errors.amount_is_null}")
         @Positive(message = "{wallet.transfers.create.errors.amount_condition_is_invalid}")
         @Pattern(regexp = "^\\d+$", message = "{wallet.transfers.create.errors.amount_is_not_integer}")
-        Integer amount
+        Long amount
 ) {
 }
