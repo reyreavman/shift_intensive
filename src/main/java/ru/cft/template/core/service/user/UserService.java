@@ -2,8 +2,8 @@ package ru.cft.template.core.service.user;
 
 import jakarta.validation.Valid;
 import ru.cft.template.api.dto.UserDTO;
-import ru.cft.template.api.payload.NewUserPayload;
-import ru.cft.template.api.payload.PatchUserPayload;
+import ru.cft.template.api.payload.user.NewUserPayload;
+import ru.cft.template.api.payload.user.PatchUserPayload;
 
 import java.util.List;
 

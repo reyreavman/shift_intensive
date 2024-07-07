@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.cft.template.api.dto.UserDTO;
-import ru.cft.template.api.payload.NewUserPayload;
+import ru.cft.template.api.payload.user.NewUserPayload;
 import ru.cft.template.core.entity.User;
 import ru.cft.template.core.exception.EntityNotFoundException;
 import ru.cft.template.core.repository.UserRepository;

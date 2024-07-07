@@ -8,7 +8,7 @@ import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.cft.template.api.payload.NewUserPayload;
+import ru.cft.template.api.payload.user.NewUserPayload;
 
 import java.util.Set;
 import java.util.stream.Collectors;

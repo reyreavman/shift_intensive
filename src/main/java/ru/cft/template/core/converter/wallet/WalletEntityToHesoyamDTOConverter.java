@@ -2,7 +2,7 @@ package ru.cft.template.core.converter.wallet;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import ru.cft.template.api.dto.WalletHesoyamDTO;
+import ru.cft.template.api.dto.wallet.WalletHesoyamDTO;
 import ru.cft.template.core.entity.Wallet;
 
 @Component

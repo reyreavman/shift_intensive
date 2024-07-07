@@ -3,7 +3,7 @@ package ru.cft.template.core.converter.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import ru.cft.template.api.payload.NewUserPayload;
+import ru.cft.template.api.payload.user.NewUserPayload;
 import ru.cft.template.core.entity.User;
 
 import java.time.LocalDate;

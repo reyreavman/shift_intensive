@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.cft.template.api.dto.WalletDTO;
-import ru.cft.template.api.dto.WalletHesoyamDTO;
+import ru.cft.template.api.dto.wallet.WalletDTO;
+import ru.cft.template.api.dto.wallet.WalletHesoyamDTO;
 import ru.cft.template.common.Paths;
 import ru.cft.template.core.service.wallet.WalletService;
 
