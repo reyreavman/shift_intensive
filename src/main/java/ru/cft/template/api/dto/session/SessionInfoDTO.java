@@ -1,4 +1,4 @@
-package ru.cft.template.api.dto;
+package ru.cft.template.api.dto.session;
 
 public record SessionInfoDTO(
         Long id,

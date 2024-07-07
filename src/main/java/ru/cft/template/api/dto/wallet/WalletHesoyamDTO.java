@@ -1,4 +1,4 @@
-package ru.cft.template.api.dto;
+package ru.cft.template.api.dto.wallet;
 
 public record WalletHesoyamDTO(
         Long userId,

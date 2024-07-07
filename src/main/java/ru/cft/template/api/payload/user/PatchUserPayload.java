@@ -1,4 +1,4 @@
-package ru.cft.template.api.payload;
+package ru.cft.template.api.payload.user;
 
 
 import jakarta.validation.constraints.Pattern;
