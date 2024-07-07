@@ -1,4 +1,4 @@
-package ru.cft.template.core.config;
+package ru.cft.template.core.beansConfiguration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

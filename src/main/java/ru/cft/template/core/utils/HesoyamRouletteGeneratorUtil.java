@@ -1,13 +1,11 @@
-package ru.cft.template.common;
+package ru.cft.template.core.utils;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
-@Component
 @RequiredArgsConstructor
-public class HesoyamRouletteGenerator {
+public class HesoyamRouletteGeneratorUtil {
     private final Random random;
     private final int chance;
 
