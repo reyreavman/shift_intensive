@@ -32,9 +32,7 @@ public class UserController {
     public ResponseEntity<UserDTO> createUser(@RequestBody NewUserPayload userPayload, UriComponentsBuilder uriComponentsBuilder) {
         UserDTO userDTO = this.userService.createUser(userPayload);
         return ResponseEntity.created(
-                        uriComponentsBuilder
-                                .replacePath(Paths.USERS_PATH.concat("/{userId}"))
-                                .build(Map.of("userId", userDTO.id())))
+                        uriComponentsBuilder.replacePath(Paths.USERS_PATH.concat("/{userId}")).build(Map.of("userId", userDTO.id())))
                 .body(userDTO);
     }
 
@@ -52,7 +50,6 @@ public class UserController {
         Supplier<Stream<Map.Entry<String, String>>> paramsSupplier = () -> params.entrySet().stream().filter(Objects::nonNull);
         if (paramsSupplier.get().count() > 1)
             throw new MultipleParamsException(paramsSupplier.get().map(Map.Entry::getKey).toList());
-
         if (paramsSupplier.get().findAny().isEmpty())
             return ResponseEntity.ok(this.userService.findAllUsers());
         if (Objects.nonNull(params.get("id")))
