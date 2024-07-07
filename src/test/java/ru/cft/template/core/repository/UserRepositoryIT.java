@@ -22,9 +22,9 @@ public class UserRepositoryIT {
     @ClassRule
     public static final PostgreSQLContainer postgres = PostgreSQLTestContainer.getInstance();
     @Autowired
-    UserRepository userRepository;
+    public UserRepository userRepository;
 
-    User expectedToFindUser = User.builder()
+    public User expectedToFindUser = User.builder()
             .id(4L)
             .firstName("Екатерина")
             .middleName("Дмитриевна")
