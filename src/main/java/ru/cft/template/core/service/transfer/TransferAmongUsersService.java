@@ -12,9 +12,9 @@ import ru.cft.template.core.entity.transfer.TransferStatus;
 import java.util.List;
 
 public interface TransferAmongUsersService {
-    TransferByEmailDTO createTransferToUserByEmail(@Valid NewTransferByEmailPayload transferPayload);
+    TransferByEmailDTO createTransferToUserByEmail(Long senderId, @Valid NewTransferByEmailPayload transferPayload);
 
-    TransferByPhoneNumberDTO createTransferToUserByPhoneNumber(@Valid NewTransferByPhoneNumberPayload transferPayload);
+    TransferByPhoneNumberDTO createTransferToUserByPhoneNumber(Long senderId, @Valid NewTransferByPhoneNumberPayload transferPayload);
 
     List<TransferAmongUsersDataDTO> findAllTransfersByUserId(Long userId);
 
