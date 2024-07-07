@@ -4,10 +4,12 @@ import org.springframework.data.repository.CrudRepository;
 import ru.cft.template.core.entity.transfer.TransferAmongUsers;
 import ru.cft.template.core.entity.transfer.TransferStatus;
 
+import java.util.List;
+
 public interface TransferAmongUsersRepository extends CrudRepository<TransferAmongUsers, Long> {
-    Iterable<TransferAmongUsers> findAllByStatus(TransferStatus status);
+    List<TransferAmongUsers> findAllByStatus(TransferStatus status);
 
-    Iterable<TransferAmongUsers> findAllBySenderId(Long id);
+    List<TransferAmongUsers> findAllBySenderId(Long id);
 
-    Iterable<TransferAmongUsers> findAllByRecipientId(Long id);
+    List<TransferAmongUsers> findAllByRecipientId(Long id);
 }

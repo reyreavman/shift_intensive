@@ -20,9 +20,9 @@ public interface TransferAmongUsersService {
 
     TransferAmongUsersDataDTO findTransferById(Long id);
 
-    List<TransferAmongUsersDataDTO> findTransfersByStatus(TransferStatus status);
+    List<TransferAmongUsersDataDTO> findTransfersByStatus(Long userId, TransferStatus status);
 
-    List<TransferAmongUsersDataDTO> findTransfersByType(TransferDirectionType type);
+    List<TransferAmongUsersDataDTO> findTransfersByDirectionType(Long userId, TransferDirectionType type);
 
-    List<TransferAmongUsersDataDTO> findTransfersByTypeAndStatus(TransferDirectionType type, TransferStatus status);
+    List<TransferAmongUsersDataDTO> findTransfersByDirectionTypeAndStatus(Long userId, TransferDirectionType type, TransferStatus status);
 }
