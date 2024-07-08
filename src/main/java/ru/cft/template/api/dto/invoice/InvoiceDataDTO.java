@@ -14,7 +14,6 @@ public record InvoiceDataDTO(
         Long amount,
         String comment,
         InvoiceStatus status,
-        LocalDateTime createdDateTime,
-        LocalDateTime paidDateTime
+        LocalDateTime createdDateTime
 ) {
 }
