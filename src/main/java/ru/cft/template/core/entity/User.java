@@ -1,19 +1,18 @@
 package ru.cft.template.core.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -30,49 +29,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "c_firstName")
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Pattern(regexp = "^[А-ЯЁ][а-яё]{1,50}$")
     private String firstName;
 
-    @Column(name = "c_middleName")
-    @Size(min = 1, max = 50)
-    @Pattern(regexp = "^[А-ЯЁ][а-яё]{1,50}$")
     private String middleName;
 
-    @Column(name = "c_lastName")
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Pattern(regexp = "^[А-ЯЁ][а-яё]{1,50}$")
     private String lastName;
 
-    @Column(name = "c_phoneNumber", unique = true)
-    @NotNull
-    @Size(min = 11, max = 11)
-    @Pattern(regexp = "^7\\d{10}$")
     private String phoneNumber;
 
-    @Column(name = "c_email", unique = true)
-    @NotNull
-    @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "{wallet.users.create.errors.email_condition_is_invalid}")
     private String email;
 
-    @Column(name = "c_birthdate")
-    @NotNull
     @DateTimeFormat(pattern = "yyyy.MM.dd", iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthdate;
 
-    @Column(name = "c_passwordHash")
-    @NotNull
     private String passwordHash;
 
-    @Column(name = "c_registrationDateTime")
-    @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime registrationDateTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    private LocalDateTime creationTimeStamp;
 
-    @Column(name = "c_lastUpdateDateTime")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime lastUpdateDateTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private LocalDateTime lastUpdateTimeStamp;
 }
