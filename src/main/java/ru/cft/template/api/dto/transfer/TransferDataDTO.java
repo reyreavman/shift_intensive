@@ -7,7 +7,7 @@ import ru.cft.template.core.entity.transfer.TransferStatus;
 import java.time.LocalDateTime;
 
 @Builder
-public record TransferAmongUsersDataDTO(
+public record TransferDataDTO(
         Long id,
         Long senderId,
         Long recipientId,

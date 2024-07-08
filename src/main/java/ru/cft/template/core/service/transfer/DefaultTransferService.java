@@ -5,20 +5,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.cft.template.api.dto.transfer.TransferAmongUsersDataDTO;
 import ru.cft.template.api.dto.transfer.TransferByEmailDTO;
 import ru.cft.template.api.dto.transfer.TransferByPhoneNumberDTO;
+import ru.cft.template.api.dto.transfer.TransferDataDTO;
 import ru.cft.template.api.payload.transfer.NewTransferByEmailPayload;
 import ru.cft.template.api.payload.transfer.NewTransferByPhoneNumberPayload;
 import ru.cft.template.core.entity.User;
 import ru.cft.template.core.entity.Wallet;
-import ru.cft.template.core.entity.transfer.TransferAmongUsers;
+import ru.cft.template.core.entity.transfer.Transfer;
 import ru.cft.template.core.entity.transfer.TransferDirectionType;
 import ru.cft.template.core.entity.transfer.TransferStatus;
 import ru.cft.template.core.exception.EntityNotFoundException;
 import ru.cft.template.core.exception.NotEnoughMoneyException;
 import ru.cft.template.core.exception.SelfTransferException;
-import ru.cft.template.core.repository.TransferAmongUsersRepository;
+import ru.cft.template.core.repository.TransferRepository;
 import ru.cft.template.core.repository.UserRepository;
 import ru.cft.template.core.repository.WalletRepository;
 
@@ -29,8 +29,8 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class DefaultTransferAmongUsersService implements TransferAmongUsersService {
-    private final TransferAmongUsersRepository transferRepository;
+public class DefaultTransferService implements TransferService {
+    private final TransferRepository transferRepository;
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
 
@@ -47,7 +47,7 @@ public class DefaultTransferAmongUsersService implements TransferAmongUsersServi
                 .orElseThrow(() -> new EntityNotFoundException(Wallet.class.getSimpleName(), Map.of("recipientWalletId", String.valueOf(recipientId))));
         if (senderWallet.equals(recipientWallet))
             throw new SelfTransferException(senderWallet.getId(), recipientWallet.getId());
-        TransferAmongUsers transfer = TransferAmongUsers.builder()
+        Transfer transfer = Transfer.builder()
                 .id(null)
                 .senderWallet(senderWallet)
                 .recipientWallet(recipientWallet)
@@ -77,7 +77,7 @@ public class DefaultTransferAmongUsersService implements TransferAmongUsersServi
                 .orElseThrow(() -> new EntityNotFoundException(Wallet.class.getSimpleName(), Map.of("recipientWalletId", String.valueOf(recipientId))));
         if (senderWallet.equals(recipientWallet))
             throw new SelfTransferException(senderWallet.getId(), recipientWallet.getId());
-        TransferAmongUsers transfer = TransferAmongUsers.builder()
+        Transfer transfer = Transfer.builder()
                 .id(null)
                 .senderWallet(senderWallet)
                 .recipientWallet(recipientWallet)
@@ -97,53 +97,53 @@ public class DefaultTransferAmongUsersService implements TransferAmongUsersServi
     }
 
     @Override
-    public List<TransferAmongUsersDataDTO> findAllTransfersByUserId(Long userId) {
-        Stream<TransferAmongUsers> allUserTransfers = Stream.concat(
+    public List<TransferDataDTO> findAllTransfersByUserId(Long userId) {
+        Stream<Transfer> allUserTransfers = Stream.concat(
                 this.transferRepository.findAllBySenderWalletId(userId).stream(),
                 this.transferRepository.findAllByRecipientWalletId(userId).stream()
         );
-        return allUserTransfers.map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class)).toList();
+        return allUserTransfers.map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class)).toList();
     }
 
     @Override
-    public TransferAmongUsersDataDTO findTransferById(Long id) {
-        return this.conversionService.convert(this.transferRepository.findById(id), TransferAmongUsersDataDTO.class);
+    public TransferDataDTO findTransferById(Long id) {
+        return this.conversionService.convert(this.transferRepository.findById(id), TransferDataDTO.class);
     }
 
     @Override
-    public List<TransferAmongUsersDataDTO> findTransfersByStatus(Long userId, TransferStatus status) {
+    public List<TransferDataDTO> findTransfersByStatus(Long userId, TransferStatus status) {
         return this.transferRepository.findAllByStatus(status)
                 .stream()
                 .filter(transfer -> transfer.getId().equals(userId))
-                .map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class))
+                .map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class))
                 .toList();
     }
 
     @Override
-    public List<TransferAmongUsersDataDTO> findTransfersByDirectionType(Long userId, TransferDirectionType type) {
+    public List<TransferDataDTO> findTransfersByDirectionType(Long userId, TransferDirectionType type) {
         if (type.equals(TransferDirectionType.INCOMING))
             return this.transferRepository.findAllByRecipientWalletId(userId)
                     .stream()
-                    .map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class))
+                    .map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class))
                     .toList();
         return this.transferRepository.findAllBySenderWalletId(userId)
                 .stream()
-                .map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class))
+                .map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class))
                 .toList();
     }
 
     @Override
-    public List<TransferAmongUsersDataDTO> findTransfersByDirectionTypeAndStatus(Long userId, TransferDirectionType type, TransferStatus status) {
+    public List<TransferDataDTO> findTransfersByDirectionTypeAndStatus(Long userId, TransferDirectionType type, TransferStatus status) {
         if (type.equals(TransferDirectionType.INCOMING))
             return this.transferRepository.findAllByRecipientWalletId(userId)
                     .stream()
                     .filter(transfer -> transfer.getStatus().equals(status))
-                    .map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class))
+                    .map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class))
                     .toList();
         return this.transferRepository.findAllBySenderWalletId(userId)
                 .stream()
                 .filter(transfer -> transfer.getStatus().equals(status))
-                .map(transfer -> this.conversionService.convert(transfer, TransferAmongUsersDataDTO.class))
+                .map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class))
                 .toList();
 
     }

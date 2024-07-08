@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(schema = "wallet", name = "transfers_among_users")
-public class TransferAmongUsers {
+public class Transfer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,7 +54,7 @@ public class TransferAmongUsers {
     @Transient
     private String recipientEmail = null;
 
-    public TransferAmongUsers(Long id, Wallet senderWallet, Wallet recipientWallet, Long amount, TransferStatus status, LocalDateTime dateTime) {
+    public Transfer(Long id, Wallet senderWallet, Wallet recipientWallet, Long amount, TransferStatus status, LocalDateTime dateTime) {
         this.id = id;
         this.senderWallet = senderWallet;
         this.recipientWallet = recipientWallet;
