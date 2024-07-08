@@ -8,13 +8,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.cft.template.api.dto.UserDTO;
 import ru.cft.template.api.payload.user.NewUserPayload;
 import ru.cft.template.core.entity.User;
 import ru.cft.template.core.exception.EntityNotFoundException;
 import ru.cft.template.core.repository.UserRepository;
 import ru.cft.template.core.service.user.DefaultUserService;
+import ru.cft.template.core.utils.PasswordUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,11 +29,12 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @ExtendWith(MockitoExtension.class)
 public class DefaultUserServiceTest {
     @Mock
-    PasswordEncoder passwordEncoder;
+    UserRepository userRepository;
     @Mock
     ConversionService conversionService;
     @Mock
-    UserRepository userRepository;
+    PasswordUtil passwordUtil;
+
     @InjectMocks
     DefaultUserService service;
 
@@ -91,7 +92,7 @@ public class DefaultUserServiceTest {
         doReturn(userPayloadConvertedToEntity)
                 .when(this.conversionService).convert(userToCreatePayload, User.class);
         doReturn(savedUser.getPasswordHash())
-                .when(this.passwordEncoder).encode(userPayloadConvertedToEntity.getPasswordHash());
+                .when(this.passwordUtil).encode(userPayloadConvertedToEntity.getPasswordHash());
         doReturn(savedUser)
                 .when(this.userRepository).save(userPayloadConvertedToEntity);
         doReturn(expectedUserDTO)

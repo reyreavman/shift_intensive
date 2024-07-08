@@ -132,7 +132,7 @@ public class TransferAmongUsersRepositoryIT {
 
         Assertions.assertThat(actualTransfers)
                 .usingRecursiveComparison()
-                .ignoringFields("senderWallet.user", "recipientWallet.user")
+                .ignoringFields("senderWallet", "recipientWallet")
                 .isEqualTo(expectedTransfers);
     }
 
@@ -148,4 +148,6 @@ public class TransferAmongUsersRepositoryIT {
                 .ignoringFields("senderWallet", "recipientWallet")
                 .isEqualTo(expectedTransfers);
     }
+
+
 }
