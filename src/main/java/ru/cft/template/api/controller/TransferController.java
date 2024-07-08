@@ -18,17 +18,16 @@ import ru.cft.template.core.entity.transfer.TransferDirectionType;
 import ru.cft.template.core.entity.transfer.TransferStatus;
 import ru.cft.template.core.exception.MultipleParamsException;
 import ru.cft.template.core.exception.NoRequestBodyException;
-import ru.cft.template.core.service.transfer.TransferAmongUsersService;
+import ru.cft.template.core.service.transfer.TransferService;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(Paths.TRANSFER_PATH)
 @RequiredArgsConstructor
 public class TransferController {
-    private final TransferAmongUsersService transferAmongUsersService;
+    private final TransferService transferService;
 
     /*
     После настройки секьюрити requestParam отсюда уйдет
@@ -41,12 +40,12 @@ public class TransferController {
         if (Objects.isNull(transferByEmailPayload) && Objects.isNull(transferByPhoneNumberPayload))
             throw new NoRequestBodyException();
         if (Objects.nonNull(transferByEmailPayload)) {
-            TransferByEmailDTO transfer = this.transferAmongUsersService.createTransferToUserByEmail(senderId, transferByEmailPayload);
+            TransferByEmailDTO transfer = this.transferService.createTransferToUserByEmail(senderId, transferByEmailPayload);
             return ResponseEntity.created(
                             uriComponentsBuilder.replacePath(Paths.TRANSFER_PATH.concat("/{transferId}")).build(Map.of("transferId", transfer.id())))
                     .body(transfer);
         }
-        TransferByPhoneNumberDTO transfer = this.transferAmongUsersService.createTransferToUserByPhoneNumber(senderId, transferByPhoneNumberPayload);
+        TransferByPhoneNumberDTO transfer = this.transferService.createTransferToUserByPhoneNumber(senderId, transferByPhoneNumberPayload);
         return ResponseEntity.created(
                         uriComponentsBuilder.replacePath(Paths.TRANSFER_PATH.concat("/{transferId}")).build(Map.of("transferId", transfer.id())))
                 .body(transfer);
@@ -57,19 +56,17 @@ public class TransferController {
     */
     @GetMapping
     public ResponseEntity<?> getTransferInfo(@RequestParam("userId") long userId,
-                                             @RequestParam("transferId") Long transferId,
-                                             @RequestParam("status") TransferStatus status,
-                                             @RequestParam("type") TransferDirectionType type) {
-        if (Objects.nonNull(transferId) && (Objects.nonNull(status) || Objects.nonNull(type)))
-            throw new MultipleParamsException(Stream.of(transferId, status, type).filter(Objects::nonNull).map(String::valueOf).toList());
-        if (Objects.nonNull(status) && Objects.nonNull(type))
-            return ResponseEntity.ok().body(this.transferAmongUsersService.findTransfersByDirectionTypeAndStatus(userId, type, status));
-        if (Objects.nonNull(transferId))
-            return ResponseEntity.ok().body(this.transferAmongUsersService.findTransferById(transferId));
-        if (Objects.nonNull(type))
-            return ResponseEntity.ok().body(this.transferAmongUsersService.findTransfersByDirectionType(userId, type));
-        if (Objects.nonNull(status))
-            return ResponseEntity.ok().body(this.transferAmongUsersService.findTransfersByStatus(userId, status));
-        return ResponseEntity.ok().body(this.transferAmongUsersService.findAllTransfersByUserId(userId));
+                                             @RequestParam Map<String, String> params) {
+        if (params.containsKey("transferId") && params.keySet().size() > 2)
+            throw new MultipleParamsException(params.values().stream().filter(Objects::nonNull).toList());
+        if (params.containsKey("status") && params.containsKey("type"))
+            return ResponseEntity.ok().body(this.transferService.findTransfersByDirectionTypeAndStatus(userId, TransferDirectionType.valueOf(params.get("type").toUpperCase()), TransferStatus.valueOf(params.get("status").toUpperCase())));
+        if (params.containsKey("transferId"))
+            return ResponseEntity.ok().body(this.transferService.findTransferById(Long.valueOf(params.get("transferId"))));
+        if (params.containsKey("type"))
+            return ResponseEntity.ok().body(this.transferService.findTransfersByDirectionType(userId, TransferDirectionType.valueOf(params.get("type").toUpperCase())));
+        if (params.containsKey("status"))
+            return ResponseEntity.ok().body(this.transferService.findTransfersByStatus(userId, TransferStatus.valueOf(params.get("status").toUpperCase())));
+        return ResponseEntity.ok().body(this.transferService.findAllTransfersByUserId(userId));
     }
 }
