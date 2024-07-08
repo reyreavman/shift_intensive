@@ -1,6 +1,5 @@
 package ru.cft.template.core.service;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,13 +7,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.cft.template.api.dto.UserDTO;
-import ru.cft.template.api.payload.user.NewUserPayload;
+import ru.cft.template.api.payload.user.UserPayload;
 import ru.cft.template.core.entity.User;
 import ru.cft.template.core.exception.EntityNotFoundException;
 import ru.cft.template.core.repository.UserRepository;
 import ru.cft.template.core.service.user.DefaultUserService;
-import ru.cft.template.core.utils.PasswordUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +32,7 @@ public class DefaultUserServiceTest {
     @Mock
     ConversionService conversionService;
     @Mock
-    PasswordUtil passwordUtil;
+    PasswordEncoder passwordEncoder;
 
     @InjectMocks
     DefaultUserService service;
@@ -60,14 +59,14 @@ public class DefaultUserServiceTest {
             .birthdate(LocalDate.parse("2004-01-01"))
             .build();
 
-    @Before
+
     public void prepareMocks() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     public void createUser_WithFullyGivenInfo_ReturnsCreatedUserDTO() {
-        NewUserPayload userToCreatePayload = NewUserPayload.builder()
+        UserPayload userToCreatePayload = UserPayload.builder()
                 .firstName("Радмир")
                 .middleName("Рустамович")
                 .lastName("Хурум")
@@ -92,7 +91,7 @@ public class DefaultUserServiceTest {
         doReturn(userPayloadConvertedToEntity)
                 .when(this.conversionService).convert(userToCreatePayload, User.class);
         doReturn(savedUser.getPasswordHash())
-                .when(this.passwordUtil).encode(userPayloadConvertedToEntity.getPasswordHash());
+                .when(this.passwordEncoder).encode(userPayloadConvertedToEntity.getPasswordHash());
         doReturn(savedUser)
                 .when(this.userRepository).save(userPayloadConvertedToEntity);
         doReturn(expectedUserDTO)

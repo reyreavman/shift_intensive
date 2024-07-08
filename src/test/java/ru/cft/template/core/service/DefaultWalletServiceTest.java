@@ -1,11 +1,9 @@
 package ru.cft.template.core.service;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.ConversionService;
 import ru.cft.template.api.dto.wallet.WalletDTO;
@@ -61,10 +59,10 @@ public class DefaultWalletServiceTest {
     WalletHesoyamDTO preparedWinnerWalletHesoyamDTO = new WalletHesoyamDTO(1L, "win", 10L, 110L);
     WalletHesoyamDTO preparedLoserWalletHesoyamDTO = new WalletHesoyamDTO(1L, "lose", 10L, 110L);
 
-    @Before
-    public void prepareMocks() {
-        MockitoAnnotations.openMocks(this);
-    }
+//    @Before
+//    public void prepareMocks() {
+//        MockitoAnnotations.openMocks(this);
+//    }
 
     @Test
     public void findWalletByUserId_WithFirstCallToGetWalletButNoWalletAndUserFound_ThrowsEntityNotFoundException() {
