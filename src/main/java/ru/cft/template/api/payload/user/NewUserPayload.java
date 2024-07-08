@@ -10,16 +10,16 @@ import lombok.Builder;
 public record NewUserPayload(
         @NotNull(message = "{wallet.users.create.errors.first_name_is_null}")
         @Size(min = 1, max = 50, message = "{wallet.users.create.errors.first_name_size_is_invalid}")
-        @Pattern(regexp = "^[¿-ﬂ®][‡-ˇ∏]{1,50}$", message = "{wallet.users.create.errors.name_condition_is_invalid}")
+        @Pattern(regexp = "^[–ê-–Ø–Å][–∞-—è—ë]{1,50}$", message = "{wallet.users.create.errors.name_condition_is_invalid}")
         String firstName,
 
         @Size(min = 1, max = 50, message = "{wallet.users.create.errors.middle_name_size_is_invalid}")
-        @Pattern(regexp = "^[¿-ﬂ®][‡-ˇ∏]{1,50}$", message = "{wallet.users.create.errors.name_condition_is_invalid}")
+        @Pattern(regexp = "^[–ê-–Ø–Å][–∞-—è—ë]{1,50}$", message = "{wallet.users.create.errors.name_condition_is_invalid}")
         String middleName,
 
         @NotNull(message = "{wallet.users.create.errors.last_name_is_null}")
         @Size(min = 1, max = 50, message = "{wallet.users.create.errors.last_name_size_is_invalid}")
-        @Pattern(regexp = "^[¿-ﬂ®][‡-ˇ∏]{1,50}$", message = "{wallet.users.create.errors.name_condition_is_invalid}")
+        @Pattern(regexp = "^[–ê-–Ø–Å][–∞-—è—ë]{1,50}$", message = "{wallet.users.create.errors.name_condition_is_invalid}")
         String lastName,
 
         @NotNull(message = "{wallet.users.create.errors.phoneNumber_is_null}")

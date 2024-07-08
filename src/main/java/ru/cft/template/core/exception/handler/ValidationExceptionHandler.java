@@ -33,16 +33,16 @@ public class ValidationExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<EntityNotFoundErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
-        return ResponseEntity.badRequest().body(new EntityNotFoundErrorResponse(HttpStatus.BAD_REQUEST, "Ничего не найдено для данных параметров", e.getEntityClassName(), e.getSelectedParamsValues()));
+        return ResponseEntity.badRequest().body(new EntityNotFoundErrorResponse(HttpStatus.BAD_REQUEST, "РћР±СЉРµРєС‚ РЅРµ РЅР°Р№РґРµРЅ", e.getEntityClassName(), e.getSelectedParamsValues()));
     }
 
     @ExceptionHandler(SelfTransferException.class)
     public ResponseEntity<SelfTransferErrorResponse> handleSelfTransferException(SelfTransferException e) {
-        return ResponseEntity.badRequest().body(new SelfTransferErrorResponse(HttpStatus.BAD_REQUEST, "Попытка перевода денег на свой счет.", e.getSenderId(), e.getRecipientId()));
+        return ResponseEntity.badRequest().body(new SelfTransferErrorResponse(HttpStatus.BAD_REQUEST, "РџРѕРїС‹С‚РєР° РїРµСЂРµРІРѕРґР° РґРµРЅРµРі РЅР° СЃРІРѕР№ СЃС‡РµС‚.", e.getSenderId(), e.getRecipientId()));
     }
 
     @ExceptionHandler(NotEnoughMoneyException.class)
     public ResponseEntity<NotEnoughMoneyErrorResponse> handleNotEnoughMoneyException(NotEnoughMoneyException e) {
-        return ResponseEntity.badRequest().body(new NotEnoughMoneyErrorResponse(HttpStatus.BAD_REQUEST, "Ошибка перевода - недостаточно средств.", e.getSenderId(), e.getBalance(), e.getTransferAmount()));
+        return ResponseEntity.badRequest().body(new NotEnoughMoneyErrorResponse(HttpStatus.BAD_REQUEST, "РћС€РёР±РєР° РїРµСЂРµРІРѕРґР° - РЅР° СЃС‡РµС‚Сѓ РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ СЃСЂРµРґСЃС‚РІ.", e.getSenderId(), e.getBalance(), e.getTransferAmount()));
     }
 }

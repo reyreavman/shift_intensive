@@ -37,8 +37,8 @@ public class UserController {
     }
 
     /*
-    После настройки секьюрити requestParam отсюда уйдет
-    */
+    РџРѕСЃР»Рµ РЅР°СЃС‚СЂРѕР№РєРё СЃРµРєСЊСЋСЂРёС‚Рё РїР°СЂР°РјРµС‚СЂ id РѕС‚СЃСЋРґР° СѓР№РґРµС‚
+    * */
     @PatchMapping
     public ResponseEntity<UserDTO> patchUser(@RequestParam("id") long id, @RequestBody PatchUserPayload userPayload) {
         UserDTO userDTO = this.userService.patchUser(id, userPayload);

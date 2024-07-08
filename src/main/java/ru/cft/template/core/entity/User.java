@@ -33,18 +33,18 @@ public class User {
     @Column(name = "c_firstName")
     @NotNull
     @Size(min = 1, max = 50)
-    @Pattern(regexp = "^[¿-ﬂ®][‡-ˇ∏]{1,50}$")
+    @Pattern(regexp = "^[–ê-–Ø–Å][–∞-—è—ë]{1,50}$")
     private String firstName;
 
     @Column(name = "c_middleName")
     @Size(min = 1, max = 50)
-    @Pattern(regexp = "^[¿-ﬂ®][‡-ˇ∏]{1,50}$")
+    @Pattern(regexp = "^[–ê-–Ø–Å][–∞-—è—ë]{1,50}$")
     private String middleName;
 
     @Column(name = "c_lastName")
     @NotNull
     @Size(min = 1, max = 50)
-    @Pattern(regexp = "^[¿-ﬂ®][‡-ˇ∏]{1,50}$")
+    @Pattern(regexp = "^[–ê-–Ø–Å][–∞-—è—ë]{1,50}$")
     private String lastName;
 
     @Column(name = "c_phoneNumber", unique = true)

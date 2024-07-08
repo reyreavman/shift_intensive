@@ -21,17 +21,17 @@ public class RequestExceptionHandler {
     public ResponseEntity<MultipleParamsErrorResponse> handleMultipleParamsException(MultipleParamsException e) {
         final List<Param> paramList = e.getParamsList().stream()
                 .map(Param::new).toList();
-        return ResponseEntity.badRequest().body(new MultipleParamsErrorResponse(HttpStatus.BAD_REQUEST, "Передано избыточное количество параметров.", paramList));
+        return ResponseEntity.badRequest().body(new MultipleParamsErrorResponse(HttpStatus.BAD_REQUEST, "РџРµСЂРµРґР°РЅРѕ РёР·Р±С‹С‚РѕС‡РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ.", paramList));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<NoRequestBodyErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        return ResponseEntity.badRequest().body(new NoRequestBodyErrorResponse(HttpStatus.BAD_REQUEST, "Запрос не может быть обработан. Отсутствует тело запроса."));
+        return ResponseEntity.badRequest().body(new NoRequestBodyErrorResponse(HttpStatus.BAD_REQUEST, "Р—Р°РїСЂРѕСЃ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕР±СЂР°Р±РѕС‚Р°РЅ. РўРµР»Рѕ Р·Р°РїСЂРѕСЃР° РЅРµ РїРµСЂРµРґР°РЅРѕ."));
     }
 
     @ExceptionHandler(NoRequestBodyException.class)
     public ResponseEntity<NoRequestBodyErrorResponse> handleNoRequestBodyException(NoRequestBodyException e) {
-        return ResponseEntity.badRequest().body(new NoRequestBodyErrorResponse(HttpStatus.BAD_REQUEST, "Запрос не может быть обработан. Отсутствует тело запроса."));
+        return ResponseEntity.badRequest().body(new NoRequestBodyErrorResponse(HttpStatus.BAD_REQUEST, "Р—Р°РїСЂРѕСЃ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕР±СЂР°Р±РѕС‚Р°РЅ. РўРµР»Рѕ Р·Р°РїСЂРѕСЃР° РЅРµ РїРµСЂРµРґР°РЅРѕ."));
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
