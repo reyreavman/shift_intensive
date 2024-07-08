@@ -6,11 +6,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.cft.template.core.exception.EntityNotFoundException;
+import ru.cft.template.core.exception.InvalidInvoiceAmountException;
+import ru.cft.template.core.exception.InvalidInvoicePayerException;
+import ru.cft.template.core.exception.InvoiceAlreadyPaidException;
 import ru.cft.template.core.exception.NotEnoughMoneyException;
+import ru.cft.template.core.exception.NotInvoiceOwnerException;
 import ru.cft.template.core.exception.SelfTransferException;
 import ru.cft.template.core.exception.common.Violation;
 import ru.cft.template.core.exception.responseWrapper.EntityNotFoundErrorResponse;
+import ru.cft.template.core.exception.responseWrapper.InvalidInvoiceAmountErrorResponse;
+import ru.cft.template.core.exception.responseWrapper.InvalidInvoicePayerErrorResponse;
+import ru.cft.template.core.exception.responseWrapper.InvoiceAlreadyPaidErrorResponse;
 import ru.cft.template.core.exception.responseWrapper.NotEnoughMoneyErrorResponse;
+import ru.cft.template.core.exception.responseWrapper.NotInvoiceOwnerErrorResponse;
 import ru.cft.template.core.exception.responseWrapper.SelfTransferErrorResponse;
 import ru.cft.template.core.exception.responseWrapper.ValidationErrorResponse;
 
@@ -43,6 +51,26 @@ public class ValidationExceptionHandler {
 
     @ExceptionHandler(NotEnoughMoneyException.class)
     public ResponseEntity<NotEnoughMoneyErrorResponse> handleNotEnoughMoneyException(NotEnoughMoneyException e) {
-        return ResponseEntity.badRequest().body(new NotEnoughMoneyErrorResponse(HttpStatus.BAD_REQUEST, "Ошибка перевода - на счету недостаточно средств.", e.getSenderId(), e.getBalance(), e.getTransferAmount()));
+        return ResponseEntity.badRequest().body(new NotEnoughMoneyErrorResponse(HttpStatus.BAD_REQUEST, "Ошибка перевода - на счету недостаточно средств.", e.getUserId(), e.getBalance(), e.getTransferAmount()));
+    }
+
+    @ExceptionHandler(InvalidInvoicePayerException.class)
+    public ResponseEntity<InvalidInvoicePayerErrorResponse> handleInvalidInvoicePayerException(InvalidInvoicePayerException e) {
+        return ResponseEntity.badRequest().body(new InvalidInvoicePayerErrorResponse(HttpStatus.BAD_REQUEST, "Пользователь не может оплатить данный счет.", e.getUserId(), e.getInvoiceId()));
+    }
+
+    @ExceptionHandler(InvoiceAlreadyPaidException.class)
+    public ResponseEntity<InvoiceAlreadyPaidErrorResponse> handleInvoiceAlreadyPaidException(InvoiceAlreadyPaidException e) {
+        return ResponseEntity.badRequest().body(new InvoiceAlreadyPaidErrorResponse(HttpStatus.BAD_REQUEST, "Счет уже оплачен", e.getInvoiceID()));
+    }
+
+    @ExceptionHandler(NotInvoiceOwnerException.class)
+    public ResponseEntity<NotInvoiceOwnerErrorResponse> handleNotInvoiceOwnerException(NotInvoiceOwnerException e) {
+        return ResponseEntity.badRequest().body(new NotInvoiceOwnerErrorResponse(HttpStatus.BAD_REQUEST, "Отмена чужого счета.", e.getUserId(), e.getInvoiceID()));
+    }
+
+    @ExceptionHandler(InvalidInvoiceAmountException.class)
+    public ResponseEntity<InvalidInvoiceAmountErrorResponse> handleInvalidInvoiceAmountException(InvalidInvoiceAmountException e) {
+        return ResponseEntity.badRequest().body(new InvalidInvoiceAmountErrorResponse(HttpStatus.BAD_REQUEST, "Невозможно оплатить часть счета.", e.getAmountInInvoice(), e.getAmountInPayload()));
     }
 }
