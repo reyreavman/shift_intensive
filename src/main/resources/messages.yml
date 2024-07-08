@@ -1,0 +1,45 @@
+wallet:
+  users:
+    create:
+      errors:
+        birthdate_is_null: День рождения должен быть указан.
+        email_condition_is_invalid: Электронная почта указана в неверном формате. Формат - example@email.com
+        email_is_null: Электронная почта должна быть указана.
+        first_name_is_null: Имя должно быть указано.
+        last_name_is_null: Фамилия должна быть указана.
+        name_condition_is_invalid: В ФИО допускаются только буквы русского алфавита, первые буквы - заглавные, длина - до 50 символов.
+        password_condition_is_invalid: Пароль указан в неверном формате. Длина пароля от 8 до 64 символов, в пароле допускаются только латинские символы, цифры, знаки !?. Обязательно наличие минимум 1 буквы верхнего и нижнего регистра, цифры и знака.
+        password_is_null: Пароль должен быть указан.
+        phoneNumber_condition_is_invalid: Телефон указан в неверном формате. Формат - 7XXXXXXXXXX.
+        phoneNumber_is_null: Телефон должен быть указан.
+    patch:
+      errors:
+        name_condition_is_invalid: В ФИО допускаются только буквы русского алфавита, первые буквы - заглавные, длина - до 50 символов
+  invoices:
+    create:
+      errors:
+        amount_is_null: Стоимость услуги должна быть указана.
+        comment_size_is_invalid: Комментарий к счету должен содержать до {max} символов.
+        recipientId_is_null: Получатель услуги должен быть указан.
+    pay:
+      errors:
+        amount_is_null: Сумма должна быть указана.
+        invoiceId_is_null: Номер счета должен быть указан.
+  sessions:
+    create:
+      errors:
+        email_condition_is_invalid: Электронная почта указана в неверном формате. Формат - example@email.com.
+        email_is_null: Электронная почта должна быть указана.
+        password_condition_is_invalid: Пароль указан в неверном формате. Длина пароля от 8 до 64 символов, в пароле допускаются только латинские символы, цифры, знаки !?. Обязательно наличие минимум 1 буквы верхнего и нижнего регистра, цифры и знака.
+        password_is_null: Пароль должен быть указан
+        phoneNumber_condition_is_invalid: Телефон указан в неверном формате. Формат - 7XXXXXXXXXX.
+        phone_number_is_null: Телефон должен быть указан.
+  transfers:
+    create:
+      errors:
+        amount_is_not_integer: Сумма перевода должны быть целым числом.
+        amount_is_null: Сумма перевода должна быть указана.
+        recipient_email_condition_is_invalid: Электронная почта получателя указана в неверном формате. Формат - example@email.com.
+        recipient_email_is_null: Электронная почта получателя должна быть указана.
+        recipient_phoneNumber_condition_is_invalid: Телефон получателя указан в неверном формате. Формат - 7XXXXXXXXXX.
+        recipient_phoneNumber_is_null: Телефон получателя должен быть указан.
