@@ -1,7 +1,6 @@
 package ru.cft.template.api.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,16 +20,16 @@ public class WalletController {
     /*
     После настройки секьюрити requestParam отсюда уйдет
     */
-    @GetMapping
-    public ResponseEntity<WalletDTO> getUserWallet(@RequestParam("id") long userId) {
-        return ResponseEntity.ok().body(this.walletService.findByUserId(userId));
+    @PostMapping("hesoyam")
+    public WalletHesoyamDTO createHesoyamRequest(@RequestParam long userId) {
+        return walletService.hesoyam(userId);
     }
 
     /*
     После настройки секьюрити requestParam отсюда уйдет
     */
-    @PostMapping("hesoyam")
-    public ResponseEntity<WalletHesoyamDTO> createHesoyamRequest(@RequestParam("id") long userId) {
-        return ResponseEntity.ok().body(this.walletService.hesoyam(userId));
+    @GetMapping
+    public WalletDTO getUserWallet(@RequestParam long userId) {
+        return walletService.findByUserId(userId);
     }
 }
