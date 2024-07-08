@@ -8,7 +8,7 @@ import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.cft.template.api.payload.user.NewUserPayload;
+import ru.cft.template.api.payload.user.UserPayload;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 public class UserValidationTest {
     Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-    NewUserPayload userPayloadFullyGivenInfo = NewUserPayload.builder()
+    UserPayload userPayloadFullyGivenInfo = UserPayload.builder()
             .firstName("Радмир")
             .middleName("Рустамович")
             .lastName("Хурум")
@@ -28,10 +28,10 @@ public class UserValidationTest {
             .birthdate("2004-01-01")
             .password("Example1!")
             .build();
-    NewUserPayload userPayloadWithoutAnyValidatingInfo = NewUserPayload.builder()
+    UserPayload userPayloadWithoutAnyValidatingInfo = UserPayload.builder()
             .middleName("Рустамович")
             .build();
-    NewUserPayload userPayloadWithWrongInfo = NewUserPayload.builder()
+    UserPayload userPayloadWithWrongInfo = UserPayload.builder()
             .firstName("адмир")
             .middleName("устамович")
             .lastName("урум")
@@ -43,7 +43,7 @@ public class UserValidationTest {
 
     @Test
     void newUserPayload_withFullyGivenInfo_ValidationSuccessful() {
-        Set<ConstraintViolation<NewUserPayload>> violations = validator.validate(userPayloadFullyGivenInfo);
+        Set<ConstraintViolation<UserPayload>> violations = validator.validate(userPayloadFullyGivenInfo);
 
         assertTrue(violations.isEmpty());
     }
@@ -53,7 +53,7 @@ public class UserValidationTest {
         Set<Path> expectedViolationsPaths = Set.of(
                 PathImpl.createPathFromString("firstName"),
                 PathImpl.createPathFromString("lastName"),
-                PathImpl.createPathFromString("phoneNumber"),
+                PathImpl.createPathFromString("recipientPhoneNumber"),
                 PathImpl.createPathFromString("email"),
                 PathImpl.createPathFromString("birthdate"),
                 PathImpl.createPathFromString("password")
@@ -70,7 +70,7 @@ public class UserValidationTest {
                 PathImpl.createPathFromString("firstName"),
                 PathImpl.createPathFromString("middleName"),
                 PathImpl.createPathFromString("lastName"),
-                PathImpl.createPathFromString("phoneNumber"),
+                PathImpl.createPathFromString("recipientPhoneNumber"),
                 PathImpl.createPathFromString("email"),
                 PathImpl.createPathFromString("birthdate"),
                 PathImpl.createPathFromString("password")
