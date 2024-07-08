@@ -8,8 +8,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class InvoiceFilters {
-    private final Boolean createdBy;
-    private final Boolean issuedTo;
+    private final InvoiceDirectionType directionType;
     private final InvoiceStatus status;
     private final LocalDate start;
     private final LocalDate end;
