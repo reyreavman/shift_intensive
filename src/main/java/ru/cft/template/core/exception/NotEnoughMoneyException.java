@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class NotEnoughMoneyException extends RuntimeException {
-    private final Long senderId;
+    private final Long userId;
     private final Long balance;
     private final Long transferAmount;
 }
