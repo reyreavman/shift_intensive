@@ -1,5 +1,6 @@
 package ru.cft.template.api.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.cft.template.api.dto.invoice.CreateInvoiceDTO;
 import ru.cft.template.api.dto.invoice.InvoiceDataDTO;
 import ru.cft.template.api.dto.invoice.InvoiceTotalDTO;
-import ru.cft.template.api.payload.invoice.InvoicePayload;
-import ru.cft.template.api.payload.invoice.PayInvoicePayload;
+import ru.cft.template.api.dto.invoice.PayInvoiceDTO;
+import ru.cft.template.api.dto.invoice.common.InvoiceDirectionType;
+import ru.cft.template.api.dto.invoice.common.InvoiceFilters;
 import ru.cft.template.common.Paths;
-import ru.cft.template.core.entity.invoice.InvoiceDirectionType;
-import ru.cft.template.core.entity.invoice.InvoiceFilters;
 import ru.cft.template.core.entity.invoice.InvoiceStatus;
 import ru.cft.template.core.service.invoice.InvoiceService;
 
@@ -34,8 +35,8 @@ public class InvoiceController {
     */
     @PostMapping
     public InvoiceDataDTO createInvoice(@RequestParam long userId,
-                                        @RequestBody InvoicePayload invoicePayload) {
-        return invoiceService.createInvoice(userId, invoicePayload);
+                                        @Valid @RequestBody CreateInvoiceDTO createInvoiceDTO) {
+        return invoiceService.createInvoice(userId, createInvoiceDTO);
     }
 
     /*
@@ -43,12 +44,12 @@ public class InvoiceController {
     */
     @PostMapping("pay")
     public InvoiceDataDTO payInvoice(@RequestParam long userId,
-                                     @RequestBody PayInvoicePayload invoicePayload) {
+                                     @Valid @RequestBody PayInvoiceDTO invoicePayload) {
         return invoiceService.payInvoice(userId, invoicePayload);
     }
 
-    @GetMapping
-    public InvoiceDataDTO getInvoiceInfo(@RequestParam UUID invoiceId) {
+    @GetMapping("{invoiceId}")
+    public InvoiceDataDTO getInvoiceInfo(@PathVariable UUID invoiceId) {
         return invoiceService.getInvoiceDataById(invoiceId);
     }
 
@@ -56,11 +57,11 @@ public class InvoiceController {
     После настройки секьюрити requestParam(userId) отсюда уйдет
     */
     @GetMapping
-    public List<InvoiceDataDTO> getInvoiceInfo(@RequestParam long userId,
-                                               @RequestParam(required = false) InvoiceDirectionType direction,
-                                               @RequestParam(required = false) InvoiceStatus status,
-                                               @RequestParam(required = false) LocalDate start,
-                                               @RequestParam(required = false) LocalDate end) {
+    public List<InvoiceDataDTO> getInvoiceInfoWithFilters(@RequestParam long userId,
+                                                          @RequestParam(required = false) InvoiceDirectionType direction,
+                                                          @RequestParam(required = false) InvoiceStatus status,
+                                                          @RequestParam(required = false) LocalDate start,
+                                                          @RequestParam(required = false) LocalDate end) {
         return invoiceService.getUserInvoicesWithFilters(userId, buildInvoiceFilters(direction, status, start, end));
     }
 
