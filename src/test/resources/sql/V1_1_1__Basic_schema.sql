@@ -4,15 +4,15 @@ drop table if exists wallet.users;
 
 create table if not exists wallet.users (
     id                              serial primary key,
-    c_first_name                    varchar(50) not null check (c_first_name ~* '^[А-ЯЁ][а-яё]{1,50}$'),
-    c_middle_name                   varchar(50) default null check (c_middle_name ~* '^[А-ЯЁ][а-яё]{1,50}$'),
-    c_last_name                     varchar(50) not null check (c_last_name ~* '^[А-ЯЁ][а-яё]{1,50}$'),
-    c_phone_number                  varchar(11) not null unique check (c_phone_number ~* '^7\d{10}$'),
-    c_email                         varchar(255) not null unique check (c_email ~* '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'),
-    c_birthdate                     date not null,
-    c_password_hash                 varchar(255) not null,
-    c_registration_date_time        timestamp default null,
-    c_last_update_date_time         timestamp default null
+    first_name                    varchar(50) not null check (c_first_name ~* '^[А-ЯЁ][а-яё]{1,50}$'),
+    middle_name                   varchar(50) default null check (c_middle_name ~* '^[А-ЯЁ][а-яё]{1,50}$'),
+    last_name                     varchar(50) not null check (c_last_name ~* '^[А-ЯЁ][а-яё]{1,50}$'),
+    phone_number                  varchar(11) not null unique check (c_phone_number ~* '^7\d{10}$'),
+    email                         varchar(255) not null unique check (c_email ~* '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'),
+    birthdate                     date not null,
+    password_hash                 varchar(255) not null,
+    registration_date_time        timestamp default null,
+    last_update_date_time         timestamp default null
 );
 
 insert into wallet.users (c_first_name, c_middle_name, c_last_name, c_phone_number, c_email, c_birthdate, c_password_hash) values
@@ -38,11 +38,11 @@ insert into wallet.wallets (user_id) values
 
 create table if not exists wallet.transfers_among_users (
     id                  serial primary key,
-    c_sender_id          int not null references wallet.users(id),
-    c_recipient_id       int not null references wallet.users(id),
-    c_amount            int not null check (c_amount > 0),
-    c_status            varchar not null,
-    c_date_time          timestamp default null
+    sender_id          int not null references wallet.users(id),
+    recipient_id       int not null references wallet.users(id),
+    amount            int not null check (c_amount > 0),
+    status            varchar not null,
+    date_time          timestamp default null
 );
 
 insert into wallet.transfers_among_users (c_sender_id, c_recipient_id, c_amount, c_status) values

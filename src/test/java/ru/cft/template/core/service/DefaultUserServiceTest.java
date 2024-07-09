@@ -8,15 +8,14 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.cft.template.api.dto.UserDTO;
-import ru.cft.template.api.payload.user.UserPayload;
+import ru.cft.template.api.dto.user.CreateUserDTO;
+import ru.cft.template.api.dto.user.UserDTO;
 import ru.cft.template.core.entity.User;
-import ru.cft.template.core.exception.EntityNotFoundException;
 import ru.cft.template.core.repository.UserRepository;
 import ru.cft.template.core.service.user.DefaultUserService;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,8 +45,6 @@ public class DefaultUserServiceTest {
             .email("rkhurum@example.com")
             .birthdate(LocalDate.parse("2004-01-01"))
             .passwordHash("hashedPassword")
-            .registrationDateTime(LocalDateTime.now())
-            .lastUpdateDateTime(null)
             .build();
     UserDTO expectedUserDTO = UserDTO.builder()
             .id(1L)
@@ -66,13 +63,13 @@ public class DefaultUserServiceTest {
 
     @Test
     public void createUser_WithFullyGivenInfo_ReturnsCreatedUserDTO() {
-        UserPayload userToCreatePayload = UserPayload.builder()
+        CreateUserDTO userToCreatePayload = CreateUserDTO.builder()
                 .firstName("Радмир")
                 .middleName("Рустамович")
                 .lastName("Хурум")
                 .phoneNumber("79999999999")
                 .email("rkhurum@example.com")
-                .birthdate("2004-01-01")
+                .birthdate(LocalDate.of(2000, 6, 1))
                 .password("Example1!")
                 .build();
         User userPayloadConvertedToEntity = User.builder()
@@ -82,10 +79,8 @@ public class DefaultUserServiceTest {
                 .lastName("Хурум")
                 .phoneNumber("79999999999")
                 .email("rkhurum@example.com")
-                .birthdate(LocalDate.parse("2004-01-01"))
+                .birthdate(LocalDate.of(2000, 6, 1))
                 .passwordHash("Example1!")
-                .registrationDateTime(LocalDateTime.now())
-                .lastUpdateDateTime(null)
                 .build();
 
         doReturn(userPayloadConvertedToEntity)
@@ -109,7 +104,7 @@ public class DefaultUserServiceTest {
     public void findUser_ByNullableId_ThrowsEntityNotFoundException() {
         Long id = null;
 
-        assertThrows(EntityNotFoundException.class, () -> this.service.findUserById(id));
+        assertThrows(NoSuchElementException.class, () -> this.service.findUserById(id));
         verify(this.userRepository).findById(id);
         verifyNoMoreInteractions(this.userRepository);
     }

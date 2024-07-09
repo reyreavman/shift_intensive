@@ -8,8 +8,9 @@ import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.cft.template.api.payload.user.UserPayload;
+import ru.cft.template.api.dto.user.CreateUserDTO;
 
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,31 +20,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 public class UserValidationTest {
     Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-    UserPayload userPayloadFullyGivenInfo = UserPayload.builder()
+    CreateUserDTO createUserDTOFullyGivenInfo = CreateUserDTO.builder()
             .firstName("Радмир")
             .middleName("Рустамович")
             .lastName("Хурум")
             .phoneNumber("79999999999")
             .email("rKhurum@example.com")
-            .birthdate("2004-01-01")
+            .birthdate(LocalDate.of(2004, 6, 1))
             .password("Example1!")
             .build();
-    UserPayload userPayloadWithoutAnyValidatingInfo = UserPayload.builder()
+    CreateUserDTO createUserDTOWithoutAnyValidatingInfo = CreateUserDTO.builder()
             .middleName("Рустамович")
             .build();
-    UserPayload userPayloadWithWrongInfo = UserPayload.builder()
+    CreateUserDTO createUserDTOWithWrongInfo = CreateUserDTO.builder()
             .firstName("адмир")
             .middleName("устамович")
             .lastName("урум")
             .phoneNumber("9999999999")
             .email("rKhurum!example.com")
-            .birthdate("20-01-01")
+            .birthdate(LocalDate.of(2004, 6, 1))
             .password("Exae!")
             .build();
 
     @Test
     void newUserPayload_withFullyGivenInfo_ValidationSuccessful() {
-        Set<ConstraintViolation<UserPayload>> violations = validator.validate(userPayloadFullyGivenInfo);
+        Set<ConstraintViolation<CreateUserDTO>> violations = validator.validate(createUserDTOFullyGivenInfo);
 
         assertTrue(violations.isEmpty());
     }
@@ -59,7 +60,7 @@ public class UserValidationTest {
                 PathImpl.createPathFromString("password")
         );
 
-        Set<Path> violationsPaths = validator.validate(userPayloadWithoutAnyValidatingInfo).stream().map(ConstraintViolation::getPropertyPath).collect(Collectors.toUnmodifiableSet());
+        Set<Path> violationsPaths = validator.validate(createUserDTOWithoutAnyValidatingInfo).stream().map(ConstraintViolation::getPropertyPath).collect(Collectors.toUnmodifiableSet());
 
         assertEquals(expectedViolationsPaths, violationsPaths);
     }
@@ -76,7 +77,7 @@ public class UserValidationTest {
                 PathImpl.createPathFromString("password")
         );
 
-        Set<Path> violationsPaths = validator.validate(userPayloadWithWrongInfo).stream().map(ConstraintViolation::getPropertyPath).collect(Collectors.toUnmodifiableSet());
+        Set<Path> violationsPaths = validator.validate(createUserDTOWithWrongInfo).stream().map(ConstraintViolation::getPropertyPath).collect(Collectors.toUnmodifiableSet());
 
         assertEquals(expectedViolationsPaths, violationsPaths);
     }

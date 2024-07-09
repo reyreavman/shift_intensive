@@ -6,19 +6,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.ConversionService;
+import ru.cft.template.api.dto.wallet.HesoyamResult;
 import ru.cft.template.api.dto.wallet.WalletDTO;
 import ru.cft.template.api.dto.wallet.WalletHesoyamDTO;
 import ru.cft.template.core.entity.User;
 import ru.cft.template.core.entity.Wallet;
-import ru.cft.template.core.exception.EntityNotFoundException;
 import ru.cft.template.core.repository.UserRepository;
 import ru.cft.template.core.repository.WalletRepository;
 import ru.cft.template.core.service.wallet.DefaultWalletService;
 import ru.cft.template.core.utils.HesoyamRouletteGeneratorUtil;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,13 +51,11 @@ public class DefaultWalletServiceTest {
             .email("rExample@example.com")
             .birthdate(LocalDate.parse("2004-06-01", DateTimeFormatter.ISO_DATE))
             .passwordHash("hashed_password")
-            .registrationDateTime(LocalDateTime.now())
-            .lastUpdateDateTime(null)
             .build();
     Wallet preparedWallet = new Wallet(1L, preparedUser, 100L);
     WalletDTO preparedWalletDTO = new WalletDTO(preparedWallet.getId(), preparedWallet.getUser().getId(), preparedWallet.getBalance());
-    WalletHesoyamDTO preparedWinnerWalletHesoyamDTO = new WalletHesoyamDTO(1L, "win", 10L, 110L);
-    WalletHesoyamDTO preparedLoserWalletHesoyamDTO = new WalletHesoyamDTO(1L, "lose", 10L, 110L);
+    WalletHesoyamDTO preparedWinnerWalletHesoyamDTO = new WalletHesoyamDTO(1L, HesoyamResult.WINNER, 10L, 110L);
+    WalletHesoyamDTO preparedLoserWalletHesoyamDTO = new WalletHesoyamDTO(1L, HesoyamResult.LOSER, 10L, 110L);
 
 //    @Before
 //    public void prepareMocks() {
@@ -72,7 +70,7 @@ public class DefaultWalletServiceTest {
         doReturn(Optional.empty())
                 .when(this.userRepository).findById(userId);
 
-        assertThrows(EntityNotFoundException.class, () -> this.service.findByUserId(userId));
+        assertThrows(NoSuchElementException.class, () -> this.service.findByUserId(userId));
         verify(this.walletRepository).findById(userId);
         verifyNoMoreInteractions(this.walletRepository);
         verify(this.userRepository).findById(userId);
@@ -128,7 +126,7 @@ public class DefaultWalletServiceTest {
         doReturn(Optional.empty())
                 .when(this.walletRepository).findById(userId);
 
-        assertThrows(EntityNotFoundException.class,() -> this.service.hesoyam(userId));
+        assertThrows(NoSuchElementException.class,() -> this.service.hesoyam(userId));
         verify(this.walletRepository).findById(userId);
         verifyNoInteractions(this.hesoyamRouletteGeneratorUtil);
         verifyNoInteractions(this.conversionService);
