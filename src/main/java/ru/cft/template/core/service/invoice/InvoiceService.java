@@ -1,18 +1,18 @@
 package ru.cft.template.core.service.invoice;
 
+import ru.cft.template.api.dto.invoice.CreateInvoiceDTO;
 import ru.cft.template.api.dto.invoice.InvoiceDataDTO;
 import ru.cft.template.api.dto.invoice.InvoiceTotalDTO;
-import ru.cft.template.api.payload.invoice.InvoicePayload;
-import ru.cft.template.api.payload.invoice.PayInvoicePayload;
-import ru.cft.template.core.entity.invoice.InvoiceFilters;
+import ru.cft.template.api.dto.invoice.PayInvoiceDTO;
+import ru.cft.template.api.dto.invoice.common.InvoiceFilters;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface InvoiceService {
-    InvoiceDataDTO createInvoice(Long userId, InvoicePayload invoicePayload);
+    InvoiceDataDTO createInvoice(Long userId, CreateInvoiceDTO createInvoiceDTO);
 
-    InvoiceDataDTO payInvoice(Long userId, PayInvoicePayload invoicePayload);
+    InvoiceDataDTO payInvoice(Long userId, PayInvoiceDTO invoicePayload);
 
     InvoiceDataDTO cancelInvoice(Long userId, UUID invoiceId);
 

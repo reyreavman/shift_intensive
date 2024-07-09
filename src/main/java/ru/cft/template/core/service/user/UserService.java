@@ -1,15 +1,15 @@
 package ru.cft.template.core.service.user;
 
-import ru.cft.template.api.dto.UserDTO;
-import ru.cft.template.api.payload.user.PatchUserPayload;
-import ru.cft.template.api.payload.user.UserPayload;
+import ru.cft.template.api.dto.user.CreateUserDTO;
+import ru.cft.template.api.dto.user.PatchUserDTO;
+import ru.cft.template.api.dto.user.UserDTO;
 
 import java.util.List;
 
 public interface UserService {
-    UserDTO createUser(UserPayload userPayload);
+    UserDTO createUser(CreateUserDTO createUserDTO);
 
-    UserDTO patchUser(Long id, PatchUserPayload userPayload);
+    UserDTO patchUser(Long id, PatchUserDTO userPayload);
 
     List<UserDTO> findAllUsers();
 
