@@ -1,30 +1,24 @@
 package ru.cft.template.core.service.transfer;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.cft.template.api.dto.transfer.CreateTransferByEmailDTO;
+import ru.cft.template.api.dto.transfer.CreateTransferByPhoneNumberDTO;
 import ru.cft.template.api.dto.transfer.TransferByEmailDTO;
 import ru.cft.template.api.dto.transfer.TransferByPhoneNumberDTO;
 import ru.cft.template.api.dto.transfer.TransferDataDTO;
-import ru.cft.template.api.payload.transfer.NewTransferByEmailPayload;
-import ru.cft.template.api.payload.transfer.NewTransferByPhoneNumberPayload;
-import ru.cft.template.core.entity.User;
 import ru.cft.template.core.entity.Wallet;
 import ru.cft.template.core.entity.transfer.Transfer;
 import ru.cft.template.core.entity.transfer.TransferDirectionType;
 import ru.cft.template.core.entity.transfer.TransferStatus;
-import ru.cft.template.core.exception.EntityNotFoundException;
-import ru.cft.template.core.exception.NotEnoughMoneyException;
-import ru.cft.template.core.exception.SelfTransferException;
+import ru.cft.template.core.exception.service.ServiceException;
+import ru.cft.template.core.mapper.TransferMapper;
 import ru.cft.template.core.repository.TransferRepository;
 import ru.cft.template.core.repository.UserRepository;
 import ru.cft.template.core.repository.WalletRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 @Service
@@ -34,116 +28,89 @@ public class DefaultTransferService implements TransferService {
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
 
-    private final ConversionService conversionService;
+    private final TransferMapper transferMapper;
 
     @Override
     @Transactional
-    public TransferByEmailDTO createTransferToUserByEmail(Long senderId, @Valid NewTransferByEmailPayload transferPayload) {
-        Wallet senderWallet = this.walletRepository.findById(senderId)
-                .orElseThrow(() -> new EntityNotFoundException(Wallet.class.getSimpleName(), Map.of("senderWalletId", String.valueOf(senderId))));
-        Long recipientId = this.userRepository.findByEmail(transferPayload.recipientEmail())
-                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), Map.of("recipientEmail", String.valueOf(transferPayload.recipientEmail())))).getId();
-        Wallet recipientWallet = this.walletRepository.findById(recipientId)
-                .orElseThrow(() -> new EntityNotFoundException(Wallet.class.getSimpleName(), Map.of("recipientWalletId", String.valueOf(recipientId))));
+    public TransferByEmailDTO createTransferToUserByEmail(Long senderId, CreateTransferByEmailDTO transferPayload) {
+        Wallet senderWallet = walletRepository.findById(senderId).orElseThrow();
+        Wallet recipientWallet = walletRepository.findById(userRepository.findByEmail(transferPayload.recipientEmail()).orElseThrow().getId()).get();
+        Transfer transfer = transferMapper.mapToTransfer(transferPayload.amount(), senderWallet, recipientWallet, null);
         if (senderWallet.equals(recipientWallet))
-            throw new SelfTransferException(senderWallet.getId(), recipientWallet.getId());
-        Transfer transfer = Transfer.builder()
-                .id(null)
-                .senderWallet(senderWallet)
-                .recipientWallet(recipientWallet)
-                .amount(transferPayload.amount())
-                .status(senderWallet.getBalance() >= transferPayload.amount() ? TransferStatus.SUCCESSFUL : TransferStatus.FAILED)
-                .dateTime(LocalDateTime.now())
-                .recipientEmail(transferPayload.recipientEmail())
-                .build();
-        this.transferRepository.save(transfer);
-        if (senderWallet.getBalance() < transferPayload.amount())
-            throw new NotEnoughMoneyException(senderId, senderWallet.getBalance(), transferPayload.amount());
-        else {
-            senderWallet.setBalance(senderWallet.getBalance() - transferPayload.amount());
-            recipientWallet.setBalance(recipientWallet.getBalance() + transferPayload.amount());
-            return this.conversionService.convert(transfer, TransferByEmailDTO.class);
+            throw new ServiceException("Попытка совершения перевода самому себе.");
+        if (senderWallet.getBalance() < transferPayload.amount()) {
+            transfer.setStatus(TransferStatus.FAILED);
+            transferRepository.save(transfer);
+            throw new ServiceException("Денег на счету пользователя - %d недостаточно для совершения перевода.".formatted(senderId));
         }
+        senderWallet.setBalance(senderWallet.getBalance() - transferPayload.amount());
+        recipientWallet.setBalance(recipientWallet.getBalance() + transferPayload.amount());
+        transfer.setStatus(TransferStatus.FAILED);
+        return transferMapper.mapToTransferByEmail(transferRepository.save(transfer));
     }
 
     @Override
     @Transactional
-    public TransferByPhoneNumberDTO createTransferToUserByPhoneNumber(Long senderId, @Valid NewTransferByPhoneNumberPayload transferPayload) {
-        Wallet senderWallet = this.walletRepository.findById(senderId)
-                .orElseThrow(() -> new EntityNotFoundException(Wallet.class.getSimpleName(), Map.of("senderWalletId", String.valueOf(senderId))));
-        Long recipientId = this.userRepository.findByPhoneNumber(transferPayload.phoneNumber())
-                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), Map.of("recipientPhoneNumber", String.valueOf(transferPayload.phoneNumber())))).getId();
-        Wallet recipientWallet = this.walletRepository.findById(recipientId)
-                .orElseThrow(() -> new EntityNotFoundException(Wallet.class.getSimpleName(), Map.of("recipientWalletId", String.valueOf(recipientId))));
+    public TransferByPhoneNumberDTO createTransferToUserByPhoneNumber(Long senderId, CreateTransferByPhoneNumberDTO transferPayload) {
+        Wallet senderWallet = walletRepository.findById(senderId).orElseThrow();
+        Wallet recipientWallet = walletRepository.findById(userRepository.findByPhoneNumber(transferPayload.recipientPhoneNumber()).orElseThrow().getId()).get();
+        Transfer transfer = transferMapper.mapToTransfer(transferPayload.amount(), senderWallet, recipientWallet, null);
         if (senderWallet.equals(recipientWallet))
-            throw new SelfTransferException(senderWallet.getId(), recipientWallet.getId());
-        Transfer transfer = Transfer.builder()
-                .id(null)
-                .senderWallet(senderWallet)
-                .recipientWallet(recipientWallet)
-                .amount(transferPayload.amount())
-                .status(senderWallet.getBalance() >= transferPayload.amount() ? TransferStatus.SUCCESSFUL : TransferStatus.FAILED)
-                .dateTime(LocalDateTime.now())
-                .recipientPhoneNumber(transferPayload.phoneNumber())
-                .build();
-        this.transferRepository.save(transfer);
-        if (senderWallet.getBalance() < transferPayload.amount())
-            throw new NotEnoughMoneyException(senderId, senderWallet.getBalance(), transferPayload.amount());
-        else {
-            senderWallet.setBalance(senderWallet.getBalance() - transferPayload.amount());
-            recipientWallet.setBalance(recipientWallet.getBalance() + transferPayload.amount());
-            return this.conversionService.convert(transfer, TransferByPhoneNumberDTO.class);
+            throw new ServiceException("Попытка совершения перевода самому себе.");
+        if (senderWallet.getBalance() < transferPayload.amount()) {
+            transfer.setStatus(TransferStatus.FAILED);
+            transferRepository.save(transfer);
+            throw new ServiceException("Денег на счету пользователя - %d недостаточно для совершения перевода.".formatted(senderId));
         }
+        senderWallet.setBalance(senderWallet.getBalance() - transferPayload.amount());
+        recipientWallet.setBalance(recipientWallet.getBalance() + transferPayload.amount());
+        transfer.setStatus(TransferStatus.FAILED);
+        return transferMapper.mapToTransferByPhoneNumber(transferRepository.save(transfer));
     }
 
     @Override
     public List<TransferDataDTO> findAllTransfersByUserId(Long userId) {
         Stream<Transfer> allUserTransfers = Stream.concat(
-                this.transferRepository.findAllBySenderWalletId(userId).stream(),
-                this.transferRepository.findAllByRecipientWalletId(userId).stream()
+                transferRepository.findAllBySenderWalletId(userId).stream(),
+                transferRepository.findAllByRecipientWalletId(userId).stream()
         );
-        return allUserTransfers.map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class)).toList();
+        return allUserTransfers.map(transferMapper::mapToTransferData).toList();
     }
 
     @Override
     public TransferDataDTO findTransferById(Long id) {
-        return this.conversionService.convert(this.transferRepository.findById(id), TransferDataDTO.class);
+        return transferMapper.mapToTransferData(transferRepository.findById(id).orElseThrow());
     }
 
     @Override
     public List<TransferDataDTO> findTransfersByStatus(Long userId, TransferStatus status) {
-        return this.transferRepository.findAllByStatus(status)
-                .stream()
-                .filter(transfer -> transfer.getId().equals(userId))
-                .map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class))
+        return transferRepository.findAllByStatus(status).stream()
+                .map(transferMapper::mapToTransferData)
                 .toList();
     }
 
     @Override
     public List<TransferDataDTO> findTransfersByDirectionType(Long userId, TransferDirectionType type) {
-        if (type.equals(TransferDirectionType.INCOMING))
-            return this.transferRepository.findAllByRecipientWalletId(userId)
-                    .stream()
-                    .map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class))
+        if (type.equals(TransferDirectionType.INCOMING)) {
+            return transferRepository.findAllBySenderWalletId(userId).stream()
+                    .map(transferMapper::mapToTransferData)
                     .toList();
-        return this.transferRepository.findAllBySenderWalletId(userId)
-                .stream()
-                .map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class))
+        }
+        return transferRepository.findAllByRecipientWalletId(userId).stream()
+                .map(transferMapper::mapToTransferData)
                 .toList();
     }
 
     @Override
     public List<TransferDataDTO> findTransfersByDirectionTypeAndStatus(Long userId, TransferDirectionType type, TransferStatus status) {
         if (type.equals(TransferDirectionType.INCOMING))
-            return this.transferRepository.findAllByRecipientWalletId(userId)
-                    .stream()
+            return transferRepository.findAllByRecipientWalletId(userId).stream()
                     .filter(transfer -> transfer.getStatus().equals(status))
-                    .map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class))
+                    .map(transferMapper::mapToTransferData)
                     .toList();
-        return this.transferRepository.findAllBySenderWalletId(userId)
-                .stream()
+        return this.transferRepository.findAllBySenderWalletId(userId).stream()
                 .filter(transfer -> transfer.getStatus().equals(status))
-                .map(transfer -> this.conversionService.convert(transfer, TransferDataDTO.class))
+                .map(transferMapper::mapToTransferData)
                 .toList();
 
     }

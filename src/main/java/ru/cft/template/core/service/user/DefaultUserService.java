@@ -5,9 +5,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import ru.cft.template.api.dto.UserDTO;
-import ru.cft.template.api.payload.user.PatchUserPayload;
-import ru.cft.template.api.payload.user.UserPayload;
+import ru.cft.template.api.dto.user.CreateUserDTO;
+import ru.cft.template.api.dto.user.PatchUserDTO;
+import ru.cft.template.api.dto.user.UserDTO;
 import ru.cft.template.core.entity.User;
 import ru.cft.template.core.entity.Wallet;
 import ru.cft.template.core.mapper.UserMapper;
@@ -28,15 +28,15 @@ public class DefaultUserService implements UserService {
 
     @Override
     @Transactional
-    public UserDTO createUser(UserPayload userPayload) {
-        User savedUser = this.userRepository.save(userMapper.mapToUser(userPayload, passwordEncoder));
+    public UserDTO createUser(CreateUserDTO createUserDTO) {
+        User savedUser = this.userRepository.save(userMapper.mapToUser(createUserDTO, passwordEncoder));
         this.walletRepository.save(new Wallet(null, savedUser, 100L));
         return userMapper.mapToUserDTO(savedUser);
     }
 
     @Override
     @Transactional
-    public UserDTO patchUser(Long id, PatchUserPayload userPayload) {
+    public UserDTO patchUser(Long id, PatchUserDTO userPayload) {
         User user = userRepository.findById(id).orElseThrow();
         User patchedUser = userMapper.mapToUserPatch(user, userPayload);
         return userMapper.mapToUserDTO(patchedUser);
