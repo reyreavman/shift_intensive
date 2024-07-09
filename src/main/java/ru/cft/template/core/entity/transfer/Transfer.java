@@ -47,5 +47,5 @@ public class Transfer {
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    private LocalDateTime dateTime;
+    private LocalDateTime creationDateTime;
 }

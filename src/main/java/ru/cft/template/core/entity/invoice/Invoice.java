@@ -38,7 +38,7 @@ public class Invoice {
     private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "senderId", nullable = false)
+    @JoinColumn(name = "recipientId", nullable = false)
     private User recipient;
 
     private Long amount;
