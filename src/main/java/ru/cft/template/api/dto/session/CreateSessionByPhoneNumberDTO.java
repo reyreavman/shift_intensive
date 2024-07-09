@@ -1,9 +1,9 @@
-package ru.cft.template.api.payload;
+package ru.cft.template.api.dto.session;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public record SessionByPhoneNumberPayload(
+public record CreateSessionByPhoneNumberDTO(
         @NotNull(message = "{wallet.sessions.create.errors.phone_number_is_null}")
         @Pattern(regexp = "^7\\d{10}$", message = "{wallet.sessions.create.errors.phoneNumber_condition_is_invalid}")
         String phoneNumber,

@@ -1,10 +1,10 @@
-package ru.cft.template.api.payload;
+package ru.cft.template.api.dto.session;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public record SessionByEmailPayload(
+public record CreateSessionByEmailDTO(
         @NotNull(message = "{wallet.sessions.create.errors.email_is_null}")
         @Email(message = "{wallet.sessions.create.errors.email_condition_is_invalid}")
         String email,

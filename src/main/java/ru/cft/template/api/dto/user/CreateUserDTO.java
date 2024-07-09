@@ -1,4 +1,4 @@
-package ru.cft.template.api.payload.user;
+package ru.cft.template.api.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Builder
-public record UserPayload(
+public record CreateUserDTO(
         @NotNull(message = "{wallet.users.create.errors.first_name_is_null}")
         @Pattern(regexp = "^[А-ЯЁ][а-яё]{1,50}$", message = "{wallet.users.create.errors.name_condition_is_invalid}")
         String firstName,

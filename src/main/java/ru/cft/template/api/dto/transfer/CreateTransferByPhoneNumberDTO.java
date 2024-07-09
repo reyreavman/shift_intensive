@@ -1,9 +1,9 @@
-package ru.cft.template.api.payload.transfer;
+package ru.cft.template.api.dto.transfer;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public record TransferByPhoneNumberPayload(
+public record CreateTransferByPhoneNumberDTO(
         @NotNull(message = "{wallet.transfers.create.errors.recipient_phoneNumber_is_null}")
         @Pattern(regexp = "^7\\d{10}$", message = "{wallet.transfers.create.errors.recipient_phoneNumber_condition_is_invalid}")
         String recipientPhoneNumber,

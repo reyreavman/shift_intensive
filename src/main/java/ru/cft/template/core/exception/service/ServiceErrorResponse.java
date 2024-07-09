@@ -1,4 +1,4 @@
-package ru.cft.template.core.exception.responseWrapper;
+package ru.cft.template.core.exception.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class NoRequestBodyErrorResponse {
+public class ServiceErrorResponse {
     private final HttpStatus status;
     private final String message;
-    private final LocalDateTime dateTime = LocalDateTime.now();
+    private final LocalDateTime creationDateTime = LocalDateTime.now();
 }

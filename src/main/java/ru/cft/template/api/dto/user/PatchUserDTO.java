@@ -1,4 +1,4 @@
-package ru.cft.template.api.payload.user;
+package ru.cft.template.api.dto.user;
 
 
 import jakarta.validation.constraints.Pattern;
@@ -8,7 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Builder
-public record PatchUserPayload(
+public record PatchUserDTO(
         @Pattern(regexp = "^[А-ЯЁ][а-яё]{1,50}$", message = "{wallet.users.patch.errors.name_condition_is_invalid}")
         String firstName,
 
