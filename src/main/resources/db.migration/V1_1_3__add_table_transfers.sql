@@ -6,5 +6,5 @@ create table if not exists wallet.transfers (
     recipientId       int not null references wallet.users(id),
     amount            int not null,
     status            transferStatus not null,
-    dateTime          timestamp not null default current_timestamp
+    creationDateTime          timestamp not null default current_timestamp
 );

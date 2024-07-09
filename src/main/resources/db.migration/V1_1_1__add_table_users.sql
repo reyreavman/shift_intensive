@@ -9,6 +9,6 @@ create table if not exists wallet.users (
     email                     varchar(255) not null unique,
     birthdate                 date not null,
     passwordHash              varchar not null,
-    registrationDateTime      timestamp not null default current_timestamp,
-    lastUpdateDateTim         timestamp default null
+    creationTimeStamp         timestamp not null default current_timestamp,
+    lastUpdateTimeStamp       timestamp default null
 )
