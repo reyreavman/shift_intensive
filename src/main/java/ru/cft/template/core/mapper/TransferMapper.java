@@ -27,7 +27,7 @@ public class TransferMapper {
                 .recipientId(transfer.getRecipientWallet().getId())
                 .amount(transfer.getAmount())
                 .status(transfer.getStatus())
-                .dateTime(transfer.getDateTime())
+                .dateTime(transfer.getCreationDateTime())
                 .build();
     }
 
@@ -37,7 +37,7 @@ public class TransferMapper {
                 .senderId(transfer.getSenderWallet().getId())
                 .recipientEmail(transfer.getRecipientWallet().getUser().getEmail())
                 .amount(transfer.getAmount())
-                .dateTime(transfer.getDateTime())
+                .dateTime(transfer.getCreationDateTime())
                 .status(transfer.getStatus())
                 .build();
     }
@@ -48,7 +48,7 @@ public class TransferMapper {
                 .senderId(transfer.getSenderWallet().getId())
                 .recipientPhoneNumber(transfer.getRecipientWallet().getUser().getPhoneNumber())
                 .amount(transfer.getAmount())
-                .dateTime(transfer.getDateTime())
+                .dateTime(transfer.getCreationDateTime())
                 .status(transfer.getStatus())
                 .build();
     }

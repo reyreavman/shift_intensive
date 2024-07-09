@@ -2,9 +2,9 @@ package ru.cft.template.core.mapper;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ru.cft.template.api.dto.UserDTO;
-import ru.cft.template.api.payload.user.PatchUserPayload;
-import ru.cft.template.api.payload.user.UserPayload;
+import ru.cft.template.api.dto.user.CreateUserDTO;
+import ru.cft.template.api.dto.user.PatchUserDTO;
+import ru.cft.template.api.dto.user.UserDTO;
 import ru.cft.template.core.entity.User;
 
 import java.util.Objects;
@@ -23,7 +23,7 @@ public class UserMapper {
                 .build();
     }
 
-    public User mapToUserPatch(User userToPatch, PatchUserPayload userPayload) {
+    public User mapToUserPatch(User userToPatch, PatchUserDTO userPayload) {
         userToPatch.setFirstName(Objects.nonNull(userPayload.firstName()) ? userPayload.firstName() : userToPatch.getFirstName());
         userToPatch.setMiddleName(Objects.nonNull(userPayload.middleName()) ? userPayload.middleName() : userToPatch.getMiddleName());
         userToPatch.setLastName(Objects.nonNull(userPayload.lastName()) ? userPayload.lastName() : userToPatch.getLastName());
@@ -31,7 +31,7 @@ public class UserMapper {
         return userToPatch;
     }
 
-    public User mapToUser(UserPayload payload, PasswordEncoder encoder) {
+    public User mapToUser(CreateUserDTO payload, PasswordEncoder encoder) {
         return User.builder()
                 .id(null)
                 .firstName(payload.firstName())
