@@ -1,6 +1,7 @@
 package ru.cft.template.api.dto.user;
 
 
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,6 +20,7 @@ public record PatchUserDTO(
         String lastName,
 
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        @Past
         LocalDate birthdate
 ) {
 }

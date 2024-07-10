@@ -2,6 +2,7 @@ package ru.cft.template.api.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -31,6 +32,7 @@ public record CreateUserDTO(
 
         @NotNull(message = "{wallet.users.create.errors.birthdate_is_null}")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        @Past
         LocalDate birthdate,
 
         @NotNull(message = "{wallet.users.create.errors.password_is_null}")
