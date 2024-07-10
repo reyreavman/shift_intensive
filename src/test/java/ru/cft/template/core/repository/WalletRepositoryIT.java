@@ -23,14 +23,14 @@ public class WalletRepositoryIT {
     public static final PostgreSQLContainer postgres = PostgreSQLTestContainer.getInstance();
     @Autowired
     public WalletRepository walletRepository;
-    public final List<User> preparedUsers = List.of(
+    public static final List<User> preparedUsers = List.of(
             User.builder().phoneNumber("79123456789").email("ivanov@example.com").build(),
             User.builder().phoneNumber("79876543210").email("sidoorova@example.com").build(),
             User.builder().phoneNumber("79032145678").email("kuznetsov@example.com").build(),
             User.builder().phoneNumber("79243256789").email("popova@example.com").build(),
             User.builder().phoneNumber("79456372891").email("divanov@example.com").build()
     );
-    public List<Wallet> preparedWallets = List.of(
+    public static final List<Wallet> preparedWallets = List.of(
             new Wallet(1L, preparedUsers.get(0), 100L),
             new Wallet(2L, preparedUsers.get(1), 100L),
             new Wallet(3L, preparedUsers.get(2), 100L),
