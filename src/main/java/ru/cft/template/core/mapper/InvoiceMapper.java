@@ -30,6 +30,7 @@ public class InvoiceMapper {
                 .amount(invoice.getAmount())
                 .comment(invoice.getComment())
                 .status(invoice.getStatus())
+                .transfer(invoice.getTransfer())
                 .createdDateTime(invoice.getCreationDateTime())
                 .build();
     }

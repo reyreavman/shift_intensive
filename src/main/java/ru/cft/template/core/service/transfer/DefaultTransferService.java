@@ -76,7 +76,7 @@ public class DefaultTransferService implements TransferService {
     @Override
     public TransferDataDTO findTransferById(Long id) {
         return transferMapper.mapToTransferData(
-                transferRepository.findById(id).orElseThrow(() -> new ServiceException("Перевод с id - %d не найден.".formatted(id)))
+                transferRepository.findById(id).orElseThrow(() -> new ServiceException("Перевод с id - %d не найден." .formatted(id)))
         );
     }
 
@@ -117,7 +117,7 @@ public class DefaultTransferService implements TransferService {
         if (senderWallet.getBalance() < transfer.getAmount()) {
             transfer.setStatus(TransferStatus.FAILED);
             transferRepository.save(transfer);
-            throw new ServiceException("Денег на счету пользователя - %d недостаточно для совершения перевода.".formatted(senderWallet.getId()));
+            throw new ServiceException("Денег на счету пользователя - %d недостаточно для совершения перевода." .formatted(senderWallet.getId()));
         }
     }
 

@@ -20,6 +20,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.cft.template.api.dto.invoice.common.InvoiceStatus;
 import ru.cft.template.core.entity.User;
+import ru.cft.template.core.entity.transfer.Transfer;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -45,6 +46,8 @@ public class Invoice {
     private User recipient;
 
     private Long amount;
+
+    private Transfer transfer;
 
     private String comment;
 

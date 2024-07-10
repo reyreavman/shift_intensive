@@ -53,7 +53,10 @@ public class DefaultInvoiceService implements InvoiceService {
         validateInvoiceToPay(invoice, invoice.getRecipient());
         Transfer transfer = transferService.createTransfer(invoice.getRecipient().getId(), invoice.getSender().getId(), invoice.getAmount());
 
-        if (transfer.getStatus().equals(TransferStatus.SUCCESSFUL)) invoice.setStatus(InvoiceStatus.PAID);
+        if (transfer.getStatus().equals(TransferStatus.SUCCESSFUL)) {
+            invoice.setStatus(InvoiceStatus.PAID);
+            invoice.setTransfer(transfer);
+        }
 
         return invoiceMapper.mapToInvoiceDataDTO(invoice);
     }
