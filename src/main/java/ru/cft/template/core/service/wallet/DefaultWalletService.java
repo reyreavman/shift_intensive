@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.cft.template.api.dto.wallet.WalletDTO;
 import ru.cft.template.api.dto.wallet.WalletHesoyamDTO;
+import ru.cft.template.core.entity.Wallet;
+import ru.cft.template.core.exception.service.ServiceException;
 import ru.cft.template.core.mapper.WalletMapper;
 import ru.cft.template.core.repository.WalletRepository;
 import ru.cft.template.core.utils.HesoyamRouletteGeneratorUtil;
@@ -18,14 +20,32 @@ public class DefaultWalletService implements WalletService {
     private final HesoyamRouletteGeneratorUtil hesoyamGenerator;
 
     @Override
-    @Transactional
-    public WalletDTO findByUserId(Long userId) {
-        return walletMapper.mapToWalletDTO(walletRepository.findById(userId).orElseThrow());
+    public WalletDTO findById(Long walletId) {
+        return walletMapper.mapToWalletDTO(findWalletById(walletId));
+    }
+
+    @Override
+    public Wallet findByIdEntity(Long walletId) {
+        return findWalletById(walletId);
+    }
+
+    @Override
+    public Wallet findByUserPhoneNumber(String phoneNumber) {
+        return walletRepository.findByUserPhoneNumber(phoneNumber).orElseThrow(() -> new ServiceException("Кошелек пользователя не найден."));
+    }
+
+    @Override
+    public Wallet findByUserEmail(String email) {
+        return walletRepository.findByUserEmail(email).orElseThrow(() -> new ServiceException("Кошелек пользователя не найден."));
     }
 
     @Override
     @Transactional
-    public WalletHesoyamDTO hesoyam(Long userId) {
-        return walletMapper.mapToWalletHesoyam(walletRepository.findById(userId).orElseThrow(), this.hesoyamGenerator.call());
+    public WalletHesoyamDTO hesoyam(Long walletId) {
+        return walletMapper.mapToWalletHesoyam(findWalletById(walletId), this.hesoyamGenerator.call());
+    }
+
+    private Wallet findWalletById(Long walletId) {
+        return walletRepository.findById(walletId).orElseThrow(() -> new ServiceException("Кошелек пользователя %d не найден.".formatted(walletId)));
     }
 }
