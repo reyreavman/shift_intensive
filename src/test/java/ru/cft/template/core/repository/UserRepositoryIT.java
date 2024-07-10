@@ -43,7 +43,7 @@ public class UserRepositoryIT {
 
         assertThat(actualUser)
                 .usingRecursiveComparison()
-                .ignoringFields("registrationDateTime", "lastUpdateDateTime")
+                .ignoringFields("creationTimeStamp", "lastUpdateTimeStamp")
                 .isEqualTo(Optional.of(expectedToFindUser));
     }
 
@@ -55,7 +55,26 @@ public class UserRepositoryIT {
 
         assertThat(actualUser)
                 .usingRecursiveComparison()
-                .ignoringFields("registrationDateTime", "lastUpdateDateTime")
+                .ignoringFields("creationTimeStamp", "lastUpdateTimeStamp")
                 .isEqualTo(Optional.of(expectedToFindUser));
+    }
+
+    @Test
+    void saveUser_ReturnsSavedUser() {
+        User expectedUser = User.builder()
+                .id(null)
+                .firstName("Тест")
+                .middleName("Тестович")
+                .lastName("Тестов")
+                .phoneNumber("79119119191")
+                .email("test@example.com")
+                .birthdate(LocalDate.of(2000, 1,1))
+                .passwordHash("Example!1")
+                .build();
+
+        User actualUser = this.userRepository.save(expectedUser);
+
+        assertThat(actualUser)
+                .isEqualTo(expectedUser);
     }
 }

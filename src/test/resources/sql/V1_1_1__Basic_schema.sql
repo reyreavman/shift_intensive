@@ -36,16 +36,16 @@ insert into wallet.wallets (user_id, balance) values
     (5, 100);
 
 
-create table if not exists wallet.transfers_among_users (
+create table if not exists wallet.transfers (
     id                  serial primary key,
     sender_id           int not null references wallet.users(id),
     recipient_id        int not null references wallet.users(id),
     amount              int not null,
     status              varchar not null,
-    date_time           timestamp
+    creation_date_time  timestamp
 );
 
-insert into wallet.transfers_among_users (sender_id, recipient_id, amount, status) values
+insert into wallet.transfers (sender_id, recipient_id, amount, status) values
     (1, 2, 50, 'SUCCESSFUL'),
     (3, 4, 20, 'FAILED'),
     (2, 1, 75, 'SUCCESSFUL'),
