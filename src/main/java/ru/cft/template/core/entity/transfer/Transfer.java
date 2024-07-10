@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(schema = "wallet", name = "transfers_among_users")
+@Table(schema = "wallet", name = "transfers")
 public class Transfer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

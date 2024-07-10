@@ -67,7 +67,7 @@ public class DefaultTransferService implements TransferService {
 
     @Override
     public List<TransferDataDTO> findAllTransfersByUserId(Long userId) {
-        return transferRepository.findAllBySenderWalletIdAndRecipientWalletId(userId, userId)
+        return transferRepository.findAllBySenderWalletIdOrRecipientWalletId(userId, userId)
                 .stream()
                 .map(transferMapper::mapToTransferData)
                 .toList();
@@ -82,7 +82,7 @@ public class DefaultTransferService implements TransferService {
 
     @Override
     public List<TransferDataDTO> findTransfersByStatus(Long userId, TransferStatus status) {
-        return transferRepository.findAllBySenderWalletIdAndRecipientWalletIdAndStatus(userId, userId, status)
+        return transferRepository.findAllBySenderWalletIdOrRecipientWalletIdAndStatus(userId, userId, status)
                 .stream()
                 .map(transferMapper::mapToTransferData)
                 .toList();
