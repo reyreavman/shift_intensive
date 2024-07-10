@@ -1,24 +1,25 @@
 package ru.cft.template.core.service;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.convert.ConversionService;
 import ru.cft.template.api.dto.wallet.HesoyamResult;
 import ru.cft.template.api.dto.wallet.WalletDTO;
 import ru.cft.template.api.dto.wallet.WalletHesoyamDTO;
 import ru.cft.template.core.entity.User;
 import ru.cft.template.core.entity.Wallet;
-import ru.cft.template.core.repository.UserRepository;
+import ru.cft.template.core.exception.service.ServiceException;
+import ru.cft.template.core.mapper.WalletMapper;
 import ru.cft.template.core.repository.WalletRepository;
 import ru.cft.template.core.service.wallet.DefaultWalletService;
 import ru.cft.template.core.utils.HesoyamRouletteGeneratorUtil;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,11 +34,9 @@ public class DefaultWalletServiceTest {
     @Mock
     WalletRepository walletRepository;
     @Mock
-    UserRepository userRepository;
+    WalletMapper walletMapper;
     @Mock
-    ConversionService conversionService;
-    @Mock
-    HesoyamRouletteGeneratorUtil hesoyamRouletteGeneratorUtil;
+    HesoyamRouletteGeneratorUtil hesoyamRouletteGenerator;
 
     @InjectMocks
     DefaultWalletService service;
@@ -57,120 +56,138 @@ public class DefaultWalletServiceTest {
     WalletHesoyamDTO preparedWinnerWalletHesoyamDTO = new WalletHesoyamDTO(1L, HesoyamResult.WINNER, 10L, 110L);
     WalletHesoyamDTO preparedLoserWalletHesoyamDTO = new WalletHesoyamDTO(1L, HesoyamResult.LOSER, 10L, 110L);
 
-//    @Before
-//    public void prepareMocks() {
-//        MockitoAnnotations.openMocks(this);
-//    }
-
-    @Test
-    public void findWalletByUserId_WithFirstCallToGetWalletButNoWalletAndUserFound_ThrowsEntityNotFoundException() {
-        Long userId = 1L;
-        doReturn(Optional.empty())
-                .when(this.walletRepository).findById(userId);
-        doReturn(Optional.empty())
-                .when(this.userRepository).findById(userId);
-
-        assertThrows(NoSuchElementException.class, () -> this.service.findById(userId));
-        verify(this.walletRepository).findById(userId);
-        verifyNoMoreInteractions(this.walletRepository);
-        verify(this.userRepository).findById(userId);
-        verifyNoMoreInteractions(this.userRepository);
-        verifyNoInteractions(this.conversionService);
+    @Before
+    public void prepareMocks() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void findWalletByUserId_WithFirstCallToGetWalletButNoWalletFound_CreatesWalletAndReturnsWalletDTO() {
+    public void findById_ButNoWalletInDB_ThrowsServiceException() {
         Long userId = 1L;
-        Wallet walletToSave = new Wallet(null, preparedUser, 100L);
         doReturn(Optional.empty())
-                .when(this.walletRepository).findById(userId);
-        doReturn(Optional.of(this.preparedUser))
-                .when(this.userRepository).findById(userId);
-        doReturn(this.preparedWallet)
-                .when(this.walletRepository).save(walletToSave);
-        doReturn(this.preparedWalletDTO)
-                .when(this.conversionService).convert(this.preparedWallet, WalletDTO.class);
+                .when(walletRepository).findById(userId);
 
-        WalletDTO actualWalletDTO = this.service.findById(userId);
-
-        assertEquals(preparedWalletDTO, actualWalletDTO);
-        verify(this.userRepository).findById(userId);
-        verifyNoMoreInteractions(this.userRepository);
-        verify(this.walletRepository).findById(userId);
-        verify(this.walletRepository).save(walletToSave);
-        verifyNoMoreInteractions(this.walletRepository);
-        verify(this.conversionService).convert(preparedWallet, WalletDTO.class);
-        verifyNoMoreInteractions(this.conversionService);
+        assertThrows(ServiceException.class, () -> service.findById(userId));
+        verify(walletRepository).findById(userId);
+        verifyNoMoreInteractions(walletRepository);
+        verifyNoInteractions(walletMapper);
     }
 
     @Test
     public void findWalletByUserId_ReturnsWalletDTO() {
         Long userId = 1L;
-        doReturn(Optional.of(this.preparedWallet))
-                .when(this.walletRepository).findById(userId);
-        doReturn(this.preparedWalletDTO)
-                .when(this.conversionService).convert(this.preparedWallet, WalletDTO.class);
+        doReturn(Optional.of(preparedWallet))
+                .when(walletRepository).findById(userId);
+        doReturn(preparedWalletDTO)
+                .when(walletMapper).mapToWalletDTO(preparedWallet);
 
-        WalletDTO actualWalletDTO = this.service.findById(userId);
+        WalletDTO actualWalletDTO = service.findById(userId);
 
         assertEquals(preparedWalletDTO, actualWalletDTO);
-        verify(this.walletRepository).findById(userId);
-        verifyNoMoreInteractions(this.userRepository);
-        verify(this.conversionService).convert(preparedWallet, WalletDTO.class);
-        verifyNoMoreInteractions(this.conversionService);
+        verify(walletRepository).findById(userId);
+        verifyNoMoreInteractions(walletRepository);
+        verify(walletMapper).mapToWalletDTO(preparedWallet);
+        verifyNoMoreInteractions(walletMapper);
     }
 
     @Test
-    public void hesoyam_WithFirstCallToGetWallet_ThrowsEntityNotFoundException() {
+    public void findById_ReturnsWalletEntity() {
         Long userId = 1L;
+        doReturn(Optional.of(preparedWallet))
+                .when(walletRepository).findById(userId);
+
+        Wallet actualWallet = service.findByIdEntity(userId);
+
+        assertEquals(preparedWallet, actualWallet);
+        verify(walletRepository).findById(userId);
+        verifyNoMoreInteractions(walletRepository);
+        verifyNoInteractions(walletMapper);
+    }
+
+    @Test
+    public void findByUserPhoneNumber_ButNoWalletsWithGivenPhoneNumber_ThrowsServiceException() {
+        String phoneNumber = "79999999999";
         doReturn(Optional.empty())
-                .when(this.walletRepository).findById(userId);
+                .when(walletRepository).findByUserPhoneNumber(phoneNumber);
 
-        assertThrows(NoSuchElementException.class,() -> this.service.hesoyam(userId));
-        verify(this.walletRepository).findById(userId);
-        verifyNoInteractions(this.hesoyamRouletteGeneratorUtil);
-        verifyNoInteractions(this.conversionService);
+
+        assertThrows(ServiceException.class, () -> service.findByUserPhoneNumber(phoneNumber));
+        verify(walletRepository).findByUserPhoneNumber(phoneNumber);
+        verifyNoMoreInteractions(walletRepository);
     }
 
     @Test
-    public void hesoyam_Winner_ReturnsWalletHesoyamDTO() {
-        Long userId = 1L;
-        doReturn(Optional.of(this.preparedWallet))
-                .when(this.walletRepository).findById(userId);
-        doReturn(true)
-                .when(this.hesoyamRouletteGeneratorUtil).call();
-        doReturn(this.preparedWinnerWalletHesoyamDTO)
-                .when(this.conversionService).convert(this.preparedWallet, WalletHesoyamDTO.class);
+    public void findByUserPhoneNumber_ReturnsWalletEntity() {
+        String phoneNumber = "79999999999";
+        doReturn(Optional.of(preparedWallet))
+                .when(walletRepository).findByUserPhoneNumber(phoneNumber);
 
-        WalletHesoyamDTO actualDTO = this.service.hesoyam(1L);
+        Wallet actualWallet = service.findByUserPhoneNumber(phoneNumber);
 
-        assertEquals(this.preparedWinnerWalletHesoyamDTO, actualDTO);
-        verify(this.walletRepository).findById(userId);
-        verifyNoMoreInteractions(this.walletRepository);
-        verify(this.hesoyamRouletteGeneratorUtil).call();
-        verifyNoMoreInteractions(this.hesoyamRouletteGeneratorUtil);
-        verify(this.conversionService).convert(preparedWallet, WalletHesoyamDTO.class);
-        verifyNoMoreInteractions(this.conversionService);
+        assertEquals(preparedWallet, actualWallet);
+        verify(walletRepository).findByUserPhoneNumber(phoneNumber);
+        verifyNoMoreInteractions(walletRepository);
+        verifyNoInteractions(walletMapper);
     }
 
     @Test
-    public void hesoyam_Loser_ReturnsWalletHesoyamDTO() {
-        Long userId = 1L;
-        doReturn(Optional.of(this.preparedWallet))
-                .when(this.walletRepository).findById(userId);
-        doReturn(true)
-                .when(this.hesoyamRouletteGeneratorUtil).call();
-        doReturn(this.preparedLoserWalletHesoyamDTO)
-                .when(this.conversionService).convert(this.preparedWallet, WalletHesoyamDTO.class);
+    public void findByUserEmail_ButNoWalletsWithGivenEmail_ThrowsServiceException() {
+        String email = "rExample@example.com";
+        doReturn(Optional.empty())
+                .when(walletRepository).findByUserEmail(email);
 
-        WalletHesoyamDTO actualDTO = this.service.hesoyam(1L);
 
-        assertEquals(this.preparedLoserWalletHesoyamDTO, actualDTO);
-        verify(this.walletRepository).findById(userId);
-        verifyNoMoreInteractions(this.walletRepository);
-        verify(this.hesoyamRouletteGeneratorUtil).call();
-        verifyNoMoreInteractions(this.hesoyamRouletteGeneratorUtil);
-        verify(this.conversionService).convert(preparedWallet, WalletHesoyamDTO.class);
-        verifyNoMoreInteractions(this.conversionService);
+        assertThrows(ServiceException.class, () -> service.findByUserEmail(email));
+        verify(walletRepository).findByUserEmail(email);
+        verifyNoMoreInteractions(walletRepository);
+    }
+
+    @Test
+    public void findByUserEmail_ReturnsWalletEntity() {
+        String email = "rExample@example.com";
+        doReturn(Optional.of(preparedWallet))
+                .when(walletRepository).findByUserEmail(email);
+
+        Wallet actualWallet = service.findByUserEmail(email);
+
+        assertEquals(preparedWallet, actualWallet);
+        verify(walletRepository).findByUserEmail(email);
+        verifyNoMoreInteractions(walletRepository);
+        verifyNoInteractions(walletMapper);
+    }
+
+    @Test
+    public void hesoyam_ButNoWalletsWithGivenId_ThrowsServiceException() {
+        Long id = 1L;
+        doReturn(Optional.empty())
+                .when(walletRepository).findById(id);
+
+
+        assertThrows(ServiceException.class, () -> service.findById(id));
+        verify(walletRepository).findById(id);
+        verifyNoMoreInteractions(walletRepository);
+    }
+
+    @Test
+    public void hesoyam_ReturnsHesoyamWinner() {
+        Long id = 1L;
+        HesoyamResult result = HesoyamResult.WINNER;
+        doReturn(result)
+                .when(hesoyamRouletteGenerator).call();
+        doReturn(Optional.of(preparedWallet))
+                .when(walletRepository).findById(id);
+        doReturn(preparedWinnerWalletHesoyamDTO)
+                .when(walletMapper).mapToWalletHesoyam(preparedWallet, result);
+
+        WalletHesoyamDTO hesoyamDTO = service.hesoyam(id);
+
+        assertEquals(preparedWinnerWalletHesoyamDTO, hesoyamDTO);
+        verify(walletRepository).findById(id);
+        verifyNoMoreInteractions(walletRepository);
+        verify(hesoyamRouletteGenerator).call();
+        verifyNoMoreInteractions(hesoyamRouletteGenerator);
+        verify(walletMapper).mapToWalletHesoyam(preparedWallet, result);
+        verifyNoMoreInteractions(walletMapper);
+
     }
 }
