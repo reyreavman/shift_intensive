@@ -1,21 +1,24 @@
 package ru.cft.template.core.service;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.cft.template.api.dto.user.CreateUserDTO;
 import ru.cft.template.api.dto.user.UserDTO;
 import ru.cft.template.core.entity.User;
+import ru.cft.template.core.entity.Wallet;
+import ru.cft.template.core.exception.service.ServiceException;
+import ru.cft.template.core.mapper.UserMapper;
 import ru.cft.template.core.repository.UserRepository;
+import ru.cft.template.core.repository.WalletRepository;
 import ru.cft.template.core.service.user.DefaultUserService;
 
 import java.time.LocalDate;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,9 +30,11 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @ExtendWith(MockitoExtension.class)
 public class DefaultUserServiceTest {
     @Mock
+    WalletRepository walletRepository;
+    @Mock
     UserRepository userRepository;
     @Mock
-    ConversionService conversionService;
+    UserMapper userMapper;
     @Mock
     PasswordEncoder passwordEncoder;
 
@@ -56,7 +61,7 @@ public class DefaultUserServiceTest {
             .birthdate(LocalDate.parse("2004-01-01"))
             .build();
 
-
+    @Before
     public void prepareMocks() {
         MockitoAnnotations.openMocks(this);
     }
@@ -84,13 +89,15 @@ public class DefaultUserServiceTest {
                 .build();
 
         doReturn(userPayloadConvertedToEntity)
-                .when(this.conversionService).convert(userToCreatePayload, User.class);
+                .when(this.userMapper).mapToUser(userToCreatePayload, savedUser.getPasswordHash());
         doReturn(savedUser.getPasswordHash())
-                .when(this.passwordEncoder).encode(userPayloadConvertedToEntity.getPasswordHash());
+                .when(this.passwordEncoder).encode(userToCreatePayload.password());
         doReturn(savedUser)
                 .when(this.userRepository).save(userPayloadConvertedToEntity);
         doReturn(expectedUserDTO)
-                .when(this.conversionService).convert(savedUser, UserDTO.class);
+                .when(this.userMapper).mapToUserDTO(savedUser);
+        doReturn(null)
+                .when(this.walletRepository).save(new Wallet(null, savedUser, 100L));
 
         UserDTO actualUser = this.service.createUser(userToCreatePayload);
 
@@ -104,7 +111,7 @@ public class DefaultUserServiceTest {
     public void findUser_ByNullableId_ThrowsEntityNotFoundException() {
         Long id = null;
 
-        assertThrows(NoSuchElementException.class, () -> this.service.findUserById(id));
+        assertThrows(ServiceException.class, () -> this.service.findUserById(id));
         verify(this.userRepository).findById(id);
         verifyNoMoreInteractions(this.userRepository);
     }
@@ -113,7 +120,7 @@ public class DefaultUserServiceTest {
     public void findUser_ByNullableEmail_ThrowsEntityNotFoundException() {
         String email = null;
 
-        assertThrows(NullPointerException.class, () -> this.service.findUserByEmail(email));
+        assertThrows(ServiceException.class, () -> this.service.findUserByEmail(email));
         verify(this.userRepository).findByEmail(email);
         verifyNoMoreInteractions(this.userRepository);
     }
@@ -122,7 +129,7 @@ public class DefaultUserServiceTest {
     public void findUser_ByNullablePhoneNumber_ThrowsEntityNotFoundException() {
         String phoneNumber = null;
 
-        assertThrows(NullPointerException.class, () -> this.service.findUserByPhoneNumber(phoneNumber));
+        assertThrows(ServiceException.class, () -> this.service.findUserByPhoneNumber(phoneNumber));
         verify(this.userRepository).findByPhoneNumber(phoneNumber);
         verifyNoMoreInteractions(this.userRepository);
     }
@@ -133,7 +140,7 @@ public class DefaultUserServiceTest {
         doReturn(Optional.of(savedUser))
                 .when(this.userRepository).findById(id);
         doReturn(expectedUserDTO)
-                .when(this.conversionService).convert(savedUser, UserDTO.class);
+                .when(this.userMapper).mapToUserDTO(savedUser);
 
         UserDTO actualUserDTO = this.service.findUserById(id);
 
@@ -148,7 +155,7 @@ public class DefaultUserServiceTest {
         doReturn(Optional.of(savedUser))
                 .when(this.userRepository).findByEmail(email);
         doReturn(expectedUserDTO)
-                .when(this.conversionService).convert(savedUser, UserDTO.class);
+                .when(this.userMapper).mapToUserDTO(savedUser);
 
         UserDTO actualUserDTO = this.service.findUserByEmail(email);
 
@@ -163,7 +170,7 @@ public class DefaultUserServiceTest {
         doReturn(Optional.of(savedUser))
                 .when(this.userRepository).findByPhoneNumber(phoneNumber);
         doReturn(expectedUserDTO)
-                .when(this.conversionService).convert(savedUser, UserDTO.class);
+                .when(this.userMapper).mapToUserDTO(savedUser);
 
         UserDTO actualUserDTO = this.service.findUserByPhoneNumber(phoneNumber);
 
