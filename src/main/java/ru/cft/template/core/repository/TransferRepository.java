@@ -12,4 +12,13 @@ public interface TransferRepository extends CrudRepository<Transfer, Long> {
     List<Transfer> findAllBySenderWalletId(Long id);
 
     List<Transfer> findAllByRecipientWalletId(Long id);
+
+    List<Transfer> findAllBySenderWalletIdAndRecipientWalletId(Long senderWalletId, Long recipientWalletId);
+
+    List<Transfer> findAllBySenderWalletIdAndRecipientWalletIdAndStatus(Long senderWalletId, Long recipientWalletId, TransferStatus status);
+
+    List<Transfer> findAllBySenderWalletIdAndStatus(Long senderWalletId, TransferStatus status);
+
+    List<Transfer> findAllByRecipientWalletIdAndStatus(Long recipientWalletId, TransferStatus status);
+
 }
