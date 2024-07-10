@@ -24,7 +24,7 @@ public class UserRepositoryIT {
     @Autowired
     public UserRepository userRepository;
 
-    public User expectedToFindUser = User.builder()
+    public static User expectedToFindUser = User.builder()
             .id(4L)
             .firstName("Екатерина")
             .middleName("Дмитриевна")

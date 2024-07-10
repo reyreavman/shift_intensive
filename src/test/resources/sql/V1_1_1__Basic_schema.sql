@@ -22,7 +22,6 @@ insert into wallet.users (first_name, middle_name, last_name, phone_number, emai
     ('Екатерина', 'Дмитриевна', 'Попова', '79243256789', 'popova@example.com', '2010-04-04', 'fourth_hashed_password'),
     ('Дмитрий', 'Сергеевич', 'Иванов', '79456372891', 'divanov@example.com', '2020-05-05', 'fifth_hashed_password');
 
-
 create table if not exists wallet.wallets (
     user_id           int primary key references wallet.users(id),
     balance           int not null
@@ -57,3 +56,27 @@ insert into wallet.transfers (sender_id, recipient_id, amount, status) values
     (2, 5, 85, 'SUCCESSFUL'),
     (2, 5, 85, 'SUCCESSFUL'),
     (4, 1, 25, 'SUCCESSFUL');
+
+create extension "uuid-ossp";
+
+create table if not exists wallet.invoices (
+    id                  uuid primary key default uuid_generate_v4(),
+    sender_id           int not null references wallet.users(id),
+    recipient_id        int not null references wallet.users(id),
+    amount              int not null,
+    comment             varchar(250),
+    status              varchar not null,
+    creation_date_time  timestamp,
+ );
+
+insert into wallet.invoices (sender_id, recipient_id, amount, comment, status) values
+  (1, 2, 300, 'This is a sample invoice comment', 'PAID'),
+  (3, 4, 500, 'This is another sample invoice comment', 'NOT_PAID'),
+  (2, 1, 250, 'This is a sample invoice for a product purchase', 'PAID'),
+  (4, 3, 700, 'This is a sample invoice for a service', 'NOT_PAID'),
+  (5, 1, 100, 'This is a small sample invoice', 'CANCELED'),
+  (2, 4, 450, 'This is a sample invoice with a medium amount', 'PAID'),
+  (3, 5, 900, 'This is a sample invoice with a large amount', 'NOT_PAID'),
+  (1, 3, 600, 'This is a sample invoice between users 1 and 3', 'PAID'),
+  (4, 2, 800, 'This is a sample invoice between users 4 and 2', 'NOT_PAID'),
+  (5, 4, 150, 'This is a sample invoice between users 5 and 4', 'CANCELED');

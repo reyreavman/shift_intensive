@@ -13,7 +13,6 @@ import ru.cft.template.core.entity.Wallet;
 import ru.cft.template.testContainers.PostgreSQLTestContainer;
 
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 @Transactional
@@ -23,12 +22,38 @@ public class WalletRepositoryIT {
     public static final PostgreSQLContainer postgres = PostgreSQLTestContainer.getInstance();
     @Autowired
     public WalletRepository walletRepository;
+
     public static final List<User> preparedUsers = List.of(
-            User.builder().phoneNumber("79123456789").email("ivanov@example.com").build(),
-            User.builder().phoneNumber("79876543210").email("sidoorova@example.com").build(),
-            User.builder().phoneNumber("79032145678").email("kuznetsov@example.com").build(),
-            User.builder().phoneNumber("79243256789").email("popova@example.com").build(),
-            User.builder().phoneNumber("79456372891").email("divanov@example.com").build()
+            User.builder()
+                    .id(1L)
+                    .phoneNumber("79123456789")
+                    .email("ivanov@example.com")
+                    .passwordHash("hashed_password")
+                    .build(),
+            User.builder()
+                    .id(2L)
+                    .phoneNumber("79876543210")
+                    .email("sidoorova@example.com")
+                    .passwordHash("another_hashed_password")
+                    .build(),
+            User.builder()
+                    .id(3L)
+                    .phoneNumber("79032145678")
+                    .email("kuznetsov@example.com")
+                    .passwordHash("third_hashed_password")
+                    .build(),
+            User.builder()
+                    .id(4L)
+                    .phoneNumber("79243256789")
+                    .email("popova@example.com")
+                    .passwordHash("fourth_hashed_password")
+                    .build(),
+            User.builder()
+                    .id(5L)
+                    .phoneNumber("79456372891")
+                    .email("divanov@example.com")
+                    .passwordHash("fifth_hashed_password")
+                    .build()
     );
     public static final List<Wallet> preparedWallets = List.of(
             new Wallet(1L, preparedUsers.get(0), 100L),
@@ -41,22 +66,26 @@ public class WalletRepositoryIT {
     @Test
     void findByUserPhoneNumber_ReturnsUserFoundByPhoneNumber() {
         String phoneNumber = "79123456789";
-        Wallet expectedWallet = Optional.of(preparedWallets.get(0)).get();
+        Wallet expectedWallet = preparedWallets.get(0);
 
         Wallet actualWallet = walletRepository.findByUserPhoneNumber(phoneNumber).get();
 
-        Assertions.assertThat(actualWallet.getUser().getPhoneNumber()).isEqualTo(expectedWallet.getUser().getPhoneNumber());
-        Assertions.assertThat(actualWallet.getUser().getEmail()).isEqualTo(expectedWallet.getUser().getEmail());
+        Assertions.assertThat(actualWallet.getUser().getPhoneNumber())
+                .isEqualTo(expectedWallet.getUser().getPhoneNumber());
+        Assertions.assertThat(actualWallet.getUser().getEmail())
+                .isEqualTo(expectedWallet.getUser().getEmail());
     }
 
     @Test
     void findByUserEmail_ReturnsUserFoundByEmail() {
         String email = "popova@example.com";
-        Wallet expectedWallet = Optional.of(preparedWallets.get(3)).get();
+        Wallet expectedWallet = preparedWallets.get(3);
 
         Wallet actualWallet = walletRepository.findByUserEmail(email).get();
 
-        Assertions.assertThat(actualWallet.getUser().getPhoneNumber()).isEqualTo(expectedWallet.getUser().getPhoneNumber());
-        Assertions.assertThat(actualWallet.getUser().getEmail()).isEqualTo(expectedWallet.getUser().getEmail());
+        Assertions.assertThat(actualWallet.getUser().getPhoneNumber())
+                .isEqualTo(expectedWallet.getUser().getPhoneNumber());
+        Assertions.assertThat(actualWallet.getUser().getEmail())
+                .isEqualTo(expectedWallet.getUser().getEmail());
     }
 }
