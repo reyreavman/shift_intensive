@@ -1,6 +1,5 @@
 package ru.cft.template.core.mapper;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.cft.template.api.dto.user.CreateUserDTO;
 import ru.cft.template.api.dto.user.PatchUserDTO;
@@ -31,7 +30,7 @@ public class UserMapper {
         return userToPatch;
     }
 
-    public User mapToUser(CreateUserDTO payload, PasswordEncoder encoder) {
+    public User mapToUser(CreateUserDTO payload, String hashedPassword) {
         return User.builder()
                 .id(null)
                 .firstName(payload.firstName())
@@ -40,7 +39,7 @@ public class UserMapper {
                 .phoneNumber(payload.phoneNumber())
                 .email(payload.email())
                 .birthdate(payload.birthdate())
-                .passwordHash(encoder.encode(payload.password()))
+                .passwordHash(hashedPassword)
                 .build();
     }
 }

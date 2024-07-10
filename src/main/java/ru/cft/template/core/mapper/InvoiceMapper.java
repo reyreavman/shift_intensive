@@ -1,22 +1,23 @@
 package ru.cft.template.core.mapper;
 
 import org.springframework.stereotype.Component;
+import ru.cft.template.api.dto.invoice.CreateInvoiceDTO;
 import ru.cft.template.api.dto.invoice.InvoiceDataDTO;
 import ru.cft.template.api.dto.invoice.InvoiceTotalDTO;
 import ru.cft.template.api.dto.invoice.common.InvoiceFilters;
+import ru.cft.template.api.dto.invoice.common.InvoiceStatus;
 import ru.cft.template.core.entity.User;
 import ru.cft.template.core.entity.invoice.Invoice;
-import ru.cft.template.core.entity.invoice.InvoiceStatus;
 
 @Component
 public class InvoiceMapper {
-    public Invoice mapToInvoice(User sender, User recipient, Long amount, String comment) {
+    public Invoice mapToInvoice(User sender, User recipient, CreateInvoiceDTO invoiceDTO) {
         return Invoice.builder()
                 .id(null)
                 .sender(sender)
                 .recipient(recipient)
-                .amount(amount)
-                .comment(comment)
+                .amount(invoiceDTO.amount())
+                .comment(invoiceDTO.comment())
                 .status(InvoiceStatus.NOT_PAID)
                 .build();
     }
