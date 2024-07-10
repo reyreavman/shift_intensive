@@ -70,7 +70,7 @@ public class DefaultWalletServiceTest {
         doReturn(Optional.empty())
                 .when(this.userRepository).findById(userId);
 
-        assertThrows(NoSuchElementException.class, () -> this.service.findByUserId(userId));
+        assertThrows(NoSuchElementException.class, () -> this.service.findById(userId));
         verify(this.walletRepository).findById(userId);
         verifyNoMoreInteractions(this.walletRepository);
         verify(this.userRepository).findById(userId);
@@ -91,7 +91,7 @@ public class DefaultWalletServiceTest {
         doReturn(this.preparedWalletDTO)
                 .when(this.conversionService).convert(this.preparedWallet, WalletDTO.class);
 
-        WalletDTO actualWalletDTO = this.service.findByUserId(userId);
+        WalletDTO actualWalletDTO = this.service.findById(userId);
 
         assertEquals(preparedWalletDTO, actualWalletDTO);
         verify(this.userRepository).findById(userId);
@@ -111,7 +111,7 @@ public class DefaultWalletServiceTest {
         doReturn(this.preparedWalletDTO)
                 .when(this.conversionService).convert(this.preparedWallet, WalletDTO.class);
 
-        WalletDTO actualWalletDTO = this.service.findByUserId(userId);
+        WalletDTO actualWalletDTO = this.service.findById(userId);
 
         assertEquals(preparedWalletDTO, actualWalletDTO);
         verify(this.walletRepository).findById(userId);

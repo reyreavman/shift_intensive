@@ -16,8 +16,8 @@ import ru.cft.template.api.dto.invoice.InvoiceTotalDTO;
 import ru.cft.template.api.dto.invoice.PayInvoiceDTO;
 import ru.cft.template.api.dto.invoice.common.InvoiceDirectionType;
 import ru.cft.template.api.dto.invoice.common.InvoiceFilters;
+import ru.cft.template.api.dto.invoice.common.InvoiceStatus;
 import ru.cft.template.common.Paths;
-import ru.cft.template.core.entity.invoice.InvoiceStatus;
 import ru.cft.template.core.service.invoice.InvoiceService;
 
 import java.time.LocalDate;

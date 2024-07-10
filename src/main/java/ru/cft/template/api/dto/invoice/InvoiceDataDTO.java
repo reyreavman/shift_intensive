@@ -1,7 +1,7 @@
 package ru.cft.template.api.dto.invoice;
 
 import lombok.Builder;
-import ru.cft.template.core.entity.invoice.InvoiceStatus;
+import ru.cft.template.api.dto.invoice.common.InvoiceStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
