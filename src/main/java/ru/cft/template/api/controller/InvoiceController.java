@@ -17,7 +17,6 @@ import ru.cft.template.api.dto.invoice.PayInvoiceDTO;
 import ru.cft.template.api.dto.invoice.common.InvoiceDirectionType;
 import ru.cft.template.api.dto.invoice.common.InvoiceFilters;
 import ru.cft.template.api.dto.invoice.common.InvoiceStatus;
-import ru.cft.template.common.Paths;
 import ru.cft.template.core.service.invoice.InvoiceService;
 
 import java.time.LocalDate;
@@ -25,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(Paths.INVOICES_PATH)
+@RequestMapping("/kartoshka-api/invoices")
 @RequiredArgsConstructor
 public class InvoiceController {
     private final InvoiceService invoiceService;
@@ -48,8 +47,8 @@ public class InvoiceController {
         return invoiceService.payInvoice(userId, invoicePayload);
     }
 
-    @GetMapping("{invoiceId}")
-    public InvoiceDataDTO getInvoiceInfo(@PathVariable UUID invoiceId) {
+    @GetMapping("{invoiceId:\\d+}")
+    public InvoiceDataDTO getInvoiceInfo(@PathVariable("invoiceId") UUID invoiceId) {
         return invoiceService.getInvoiceDataById(invoiceId);
     }
 

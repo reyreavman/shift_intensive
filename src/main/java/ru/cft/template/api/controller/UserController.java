@@ -1,9 +1,11 @@
 package ru.cft.template.api.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,14 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.cft.template.api.dto.user.CreateUserDTO;
 import ru.cft.template.api.dto.user.PatchUserDTO;
 import ru.cft.template.api.dto.user.UserDTO;
-import ru.cft.template.common.Paths;
 import ru.cft.template.core.service.user.UserService;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
-@RequestMapping(Paths.USERS_PATH)
+@RequestMapping("/kartoshka-api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -29,11 +29,9 @@ public class UserController {
         return userService.createUser(createUserDTO);
     }
 
-    @GetMapping
-    public UserDTO getUserInfo(@RequestParam(required = false) Long userId,
-                               @RequestParam(required = false) String phoneNumber) {
-        if (Objects.nonNull(userId)) return userService.findUserById(userId);
-        return userService.findUserByPhoneNumber(phoneNumber);
+    @GetMapping("{userId:\\d+}")
+    public UserDTO getUserInfo(@Min(1L) @PathVariable(value = "userId") long userId) {
+        return userService.findUserById(userId);
     }
 
     @GetMapping("all")

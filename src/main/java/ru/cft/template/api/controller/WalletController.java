@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.cft.template.api.dto.wallet.WalletDTO;
 import ru.cft.template.api.dto.wallet.WalletHesoyamDTO;
-import ru.cft.template.common.Paths;
 import ru.cft.template.core.service.wallet.WalletService;
 
 @RestController
-@RequestMapping(Paths.WALLETS_PATH)
+@RequestMapping("/kartoshka-api/wallets")
 @RequiredArgsConstructor
 public class WalletController {
     private final WalletService walletService;
@@ -21,7 +20,7 @@ public class WalletController {
     После настройки секьюрити requestParam отсюда уйдет
     */
     @PostMapping("hesoyam")
-    public WalletHesoyamDTO createHesoyamRequest(@RequestParam long userId) {
+    public WalletHesoyamDTO createHesoyamRequest(@RequestParam("userId") long userId) {
         return walletService.hesoyam(userId);
     }
 
@@ -29,7 +28,7 @@ public class WalletController {
     После настройки секьюрити requestParam отсюда уйдет
     */
     @GetMapping
-    public WalletDTO getUserWallet(@RequestParam long userId) {
-        return walletService.findByUserId(userId);
+    public WalletDTO getUserWallet(@RequestParam("userId") long userId) {
+        return walletService.findById(userId);
     }
 }

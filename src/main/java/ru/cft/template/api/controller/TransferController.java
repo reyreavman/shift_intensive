@@ -1,6 +1,7 @@
 package ru.cft.template.api.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +15,6 @@ import ru.cft.template.api.dto.transfer.CreateTransferByPhoneNumberDTO;
 import ru.cft.template.api.dto.transfer.TransferByEmailDTO;
 import ru.cft.template.api.dto.transfer.TransferByPhoneNumberDTO;
 import ru.cft.template.api.dto.transfer.TransferDataDTO;
-import ru.cft.template.common.Paths;
 import ru.cft.template.core.entity.transfer.TransferDirectionType;
 import ru.cft.template.core.entity.transfer.TransferStatus;
 import ru.cft.template.core.service.transfer.TransferService;
@@ -22,7 +22,7 @@ import ru.cft.template.core.service.transfer.TransferService;
 import java.util.List;
 
 @RestController
-@RequestMapping(Paths.TRANSFER_PATH)
+@RequestMapping("/kartoshka-api/transfers")
 @RequiredArgsConstructor
 public class TransferController {
     private final TransferService transferService;
@@ -31,19 +31,22 @@ public class TransferController {
     После настройки секьюрити requestParam отсюда уйдет
     */
     @PostMapping("/email")
-    public TransferByEmailDTO createTransferByEmail(@RequestParam long senderId,
+    public TransferByEmailDTO createTransferByEmail(@RequestParam("senderId") long senderId,
                                                     @Valid @RequestBody CreateTransferByEmailDTO createTransferByEmailDTO) {
         return transferService.createTransferToUserByEmail(senderId, createTransferByEmailDTO);
     }
 
+    /*
+    После настройки секьюрити requestParam отсюда уйдет
+    */
     @PostMapping("/recipientPhoneNumber")
-    public TransferByPhoneNumberDTO createTransferByPhoneNumber(@RequestParam long senderId,
+    public TransferByPhoneNumberDTO createTransferByPhoneNumber(@RequestParam("senderId") long senderId,
                                                                 @Valid @RequestBody CreateTransferByPhoneNumberDTO createTransferByPhoneNumberDTO) {
         return transferService.createTransferToUserByPhoneNumber(senderId, createTransferByPhoneNumberDTO);
     }
 
-    @GetMapping("{transferId}")
-    public TransferDataDTO getTransferInfo(@PathVariable long transferId) {
+    @GetMapping("{transferId:\\d+}")
+    public TransferDataDTO getTransferInfo(@Min(1L) @PathVariable("transferId") long transferId) {
         return this.transferService.findTransferById(transferId);
     }
 
@@ -51,7 +54,7 @@ public class TransferController {
     После настройки секьюрити requestParam("userId") отсюда уйдет
     */
     @GetMapping
-    public List<TransferDataDTO> getTransfersInfoWithFilters(@RequestParam long userId,
+    public List<TransferDataDTO> getTransfersInfoWithFilters(@RequestParam("senderId") long userId,
                                                              @RequestParam(required = false) TransferStatus status,
                                                              @RequestParam(required = false) TransferDirectionType directionType) {
         return transferService.findTransfersByDirectionTypeAndStatus(userId, directionType, status);
