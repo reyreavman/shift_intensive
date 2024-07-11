@@ -33,7 +33,7 @@ public class InvoiceController {
     После настройки секьюрити requestParam(userId) отсюда уйдет
     */
     @PostMapping
-    public InvoiceDataDTO createInvoice(@RequestParam long userId,
+    public InvoiceDataDTO createInvoice(@RequestParam("userId") long userId,
                                         @Valid @RequestBody CreateInvoiceDTO createInvoiceDTO) {
         return invoiceService.createInvoice(userId, createInvoiceDTO);
     }
@@ -42,7 +42,7 @@ public class InvoiceController {
     После настройки секьюрити requestParam(userId) отсюда уйдет
     */
     @PostMapping("pay")
-    public InvoiceDataDTO payInvoice(@RequestParam long userId,
+    public InvoiceDataDTO payInvoice(@RequestParam("userId") long userId,
                                      @Valid @RequestBody PayInvoiceDTO invoicePayload) {
         return invoiceService.payInvoice(userId, invoicePayload);
     }
@@ -56,11 +56,11 @@ public class InvoiceController {
     После настройки секьюрити requestParam(userId) отсюда уйдет
     */
     @GetMapping
-    public List<InvoiceDataDTO> getInvoiceInfoWithFilters(@RequestParam long userId,
-                                                          @RequestParam(required = false) InvoiceDirectionType direction,
-                                                          @RequestParam(required = false) InvoiceStatus status,
-                                                          @RequestParam(required = false) LocalDate start,
-                                                          @RequestParam(required = false) LocalDate end) {
+    public List<InvoiceDataDTO> getInvoiceInfoWithFilters(@RequestParam("userId") long userId,
+                                                          @RequestParam(required = false, name = "direction") InvoiceDirectionType direction,
+                                                          @RequestParam(required = false, name = "status") InvoiceStatus status,
+                                                          @RequestParam(required = false, name = "start") LocalDate start,
+                                                          @RequestParam(required = false, name = "end") LocalDate end) {
         return invoiceService.getUserInvoicesWithFilters(userId, buildInvoiceFilters(direction, status, start, end));
     }
 
@@ -68,11 +68,11 @@ public class InvoiceController {
     После настройки секьюрити requestParam(userId) отсюда уйдет
     */
     @GetMapping("total")
-    public InvoiceTotalDTO getInvoiceTotal(@RequestParam long userId,
-                                           @RequestParam(required = false) InvoiceDirectionType direction,
-                                           @RequestParam(required = false) InvoiceStatus status,
-                                           @RequestParam(required = false) LocalDate start,
-                                           @RequestParam(required = false) LocalDate end) {
+    public InvoiceTotalDTO getInvoiceTotal(@RequestParam("userId") long userId,
+                                           @RequestParam(required = false, name = "direction") InvoiceDirectionType direction,
+                                           @RequestParam(required = false, name = "status") InvoiceStatus status,
+                                           @RequestParam(required = false, name = "start") LocalDate start,
+                                           @RequestParam(required = false, name = "end") LocalDate end) {
         return invoiceService.getUserInvoicesTotalWithFilters(userId, buildInvoiceFilters(direction, status, start, end));
     }
 
@@ -80,11 +80,11 @@ public class InvoiceController {
     После настройки секьюрити requestParam(userId) отсюда уйдет
     */
     @GetMapping("oldest")
-    public InvoiceDataDTO getOldestInvoice(@RequestParam long userId,
-                                           @RequestParam(required = false) InvoiceDirectionType direction,
-                                           @RequestParam(required = false) InvoiceStatus status,
-                                           @RequestParam(required = false) LocalDate start,
-                                           @RequestParam(required = false) LocalDate end) {
+    public InvoiceDataDTO getOldestInvoice(@RequestParam("userId") long userId,
+                                           @RequestParam(required = false, name = "direction") InvoiceDirectionType direction,
+                                           @RequestParam(required = false, name = "status") InvoiceStatus status,
+                                           @RequestParam(required = false, name = "start") LocalDate start,
+                                           @RequestParam(required = false, name = "end") LocalDate end) {
         return invoiceService.getOldestUserInvoice(userId, buildInvoiceFilters(direction, status, start, end));
     }
 

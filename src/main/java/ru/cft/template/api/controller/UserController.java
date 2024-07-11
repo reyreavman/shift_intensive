@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @GetMapping("{userId:\\d+}")
-    public UserDTO getUserInfo(@Min(1L) @PathVariable(value = "userId") long userId) {
+    public UserDTO getUserInfo(@Min(1L) @PathVariable(name = "userId") long userId) {
         return userService.findUserById(userId);
     }
 
@@ -43,7 +43,7 @@ public class UserController {
     После настройки секьюрити параметр id отсюда уйдет
     * */
     @PatchMapping
-    public UserDTO patchUser(@RequestParam long id,
+    public UserDTO patchUser(@Min(1L) @RequestParam(name = "id") long id,
                              @Valid @RequestBody PatchUserDTO userPayload) {
         return userService.patchUser(id, userPayload);
     }

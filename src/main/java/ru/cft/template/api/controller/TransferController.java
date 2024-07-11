@@ -39,7 +39,7 @@ public class TransferController {
     /*
     После настройки секьюрити requestParam отсюда уйдет
     */
-    @PostMapping("/recipientPhoneNumber")
+    @PostMapping("/phoneNumber")
     public TransferByPhoneNumberDTO createTransferByPhoneNumber(@RequestParam("senderId") long senderId,
                                                                 @Valid @RequestBody CreateTransferByPhoneNumberDTO createTransferByPhoneNumberDTO) {
         return transferService.createTransferToUserByPhoneNumber(senderId, createTransferByPhoneNumberDTO);
@@ -55,8 +55,8 @@ public class TransferController {
     */
     @GetMapping
     public List<TransferDataDTO> getTransfersInfoWithFilters(@RequestParam("senderId") long userId,
-                                                             @RequestParam(required = false) TransferStatus status,
-                                                             @RequestParam(required = false) TransferDirectionType directionType) {
+                                                             @RequestParam(required = false, name = "status") TransferStatus status,
+                                                             @RequestParam(required = false, name = "direction") TransferDirectionType directionType) {
         return transferService.findTransfersByDirectionTypeAndStatus(userId, directionType, status);
     }
 }
