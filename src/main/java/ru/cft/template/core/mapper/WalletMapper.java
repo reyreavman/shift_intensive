@@ -8,11 +8,11 @@ import ru.cft.template.core.entity.Wallet;
 
 @Component
 public class WalletMapper {
-    public WalletHesoyamDTO mapToWalletHesoyam(Wallet wallet, HesoyamResult result) {
-        return new WalletHesoyamDTO(wallet.getId(), result, 10L, wallet.getBalance());
+    public WalletHesoyamDTO mapToWalletHesoyam(Wallet wallet, HesoyamResult result, Long amount) {
+        return new WalletHesoyamDTO(wallet.getId(), result, result.equals(HesoyamResult.WINNER) ? amount : 0L, wallet.getBalance());
     }
 
     public WalletDTO mapToWalletDTO(Wallet wallet) {
-        return new WalletDTO(wallet.getId(), wallet.getUser().getId(), wallet.getBalance());
+        return new WalletDTO(wallet.getId(), wallet.getBalance());
     }
 }
