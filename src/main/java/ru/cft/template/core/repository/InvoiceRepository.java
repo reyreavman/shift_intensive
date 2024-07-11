@@ -11,7 +11,7 @@ public interface InvoiceRepository extends CrudRepository<Invoice, UUID> {
 
     List<Invoice> findAllByRecipientId(Long recipientId);
 
-    List<Invoice> findBySenderIdOrderByCreationDateTimeAsc(Long senderId);
+    List<Invoice> findAllBySenderIdOrRecipientId(Long senderId, Long recipientId);
 
-    List<Invoice> findByRecipientIdOrderByCreationDateTimeAsc(Long recipientId);
+    List<Invoice> findBySenderIdOrRecipientIdOrderByCreationDateTimeAsc(Long senderId, Long recipientId);
 }
