@@ -18,13 +18,13 @@ public interface TransferService {
 
     TransferByPhoneNumberDTO createTransferToUserByPhoneNumber(Long senderId, CreateTransferByPhoneNumberDTO transferPayload);
 
-    List<TransferDataDTO> findAllTransfersByUserId(Long userId);
+//    List<TransferDataDTO> findAllTransfersByUserId(Long userId);
 
     TransferDataDTO findTransferById(Long id);
 
-    List<TransferDataDTO> findTransfersByStatus(Long userId, TransferStatus status);
+//    List<TransferDataDTO> findTransfersByStatus(Long userId, TransferStatus status);
 
-    List<TransferDataDTO> findTransfersByDirectionType(Long userId, TransferDirectionType type);
+//    List<TransferDataDTO> findTransfersByDirectionType(Long userId, TransferDirectionType type);
 
     List<TransferDataDTO> findTransfersByDirectionTypeAndStatus(Long userId, TransferDirectionType type, TransferStatus status);
 }
