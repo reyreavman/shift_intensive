@@ -1,7 +1,7 @@
 package ru.cft.template.core.service.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.cft.template.api.dto.user.CreateUserDTO;
@@ -23,14 +23,13 @@ public class DefaultUserService implements UserService {
     private final WalletRepository walletRepository;
 
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public UserDTO createUser(CreateUserDTO createUserDTO) {
         User savedUser = userRepository.save(
                 userMapper.mapToUser(
-                        createUserDTO, passwordEncoder.encode(createUserDTO.password()))
+                        createUserDTO, BCrypt.hashpw(createUserDTO.password(), BCrypt.gensalt()))
         );
         walletRepository.save(new Wallet(null, savedUser, 100L));
         return userMapper.mapToUserDTO(savedUser);

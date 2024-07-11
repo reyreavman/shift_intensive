@@ -1,14 +1,22 @@
 server:
-    port: 8080
+  port: 8080
 
 spring:
-    datasource:
-        url: jdbc:postgresql://localhost:5430/wallet
-        username: wallet
-        password: wallet
-    flyway:
-        enabled: true
-        locations:
-          - db.migration
-        encoding: UTF-8
-        baselineOnMigrate: true
+  datasource:
+    url: jdbc:postgresql://localhost:5430/wallet
+    username: wallet
+    password: wallet
+  flyway:
+    enabled: true
+    locations:
+      - db.migration
+    encoding: UTF-8
+    baselineOnMigrate: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - prometheus

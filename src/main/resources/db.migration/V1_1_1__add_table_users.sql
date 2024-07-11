@@ -10,6 +10,5 @@ create table if not exists wallet.users (
     birthdate                   date not null,
     password_hash               varchar not null,
     creation_time_stamp         timestamp not null,
-    last_update_time_stamp      timestamp,
-    enabled                     boolean not null
+    last_update_time_stamp      timestamp
 )
