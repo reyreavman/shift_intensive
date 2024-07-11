@@ -2,6 +2,7 @@ package ru.cft.template.api.dto.transfer;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 
 public record CreateTransferByPhoneNumberDTO(
         @NotNull(message = "{wallet.transfers.create.errors.recipient_phoneNumber_is_null}")
@@ -9,7 +10,7 @@ public record CreateTransferByPhoneNumberDTO(
         String recipientPhoneNumber,
 
         @NotNull(message = "{wallet.transfers.create.errors.amount_is_null}")
-        @Pattern(regexp = "^\\d+$", message = "{wallet.transfers.create.errors.amount_is_not_integer}")
+        @Positive(message = "{wallet.transfers.create.errors.amount_is_negative}")
         Long amount
 ) {
 }
