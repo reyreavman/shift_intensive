@@ -52,7 +52,7 @@ public class DefaultWalletServiceTest {
             .passwordHash("hashed_password")
             .build();
     Wallet preparedWallet = new Wallet(1L, preparedUser, 100L);
-    WalletDTO preparedWalletDTO = new WalletDTO(preparedWallet.getId(), preparedWallet.getUser().getId(), preparedWallet.getBalance());
+    WalletDTO preparedWalletDTO = new WalletDTO(preparedWallet.getId(), preparedWallet.getBalance());
     WalletHesoyamDTO preparedWinnerWalletHesoyamDTO = new WalletHesoyamDTO(1L, HesoyamResult.WINNER, 10L, 110L);
     WalletHesoyamDTO preparedLoserWalletHesoyamDTO = new WalletHesoyamDTO(1L, HesoyamResult.LOSER, 10L, 110L);
 
@@ -177,7 +177,7 @@ public class DefaultWalletServiceTest {
         doReturn(Optional.of(preparedWallet))
                 .when(walletRepository).findById(id);
         doReturn(preparedWinnerWalletHesoyamDTO)
-                .when(walletMapper).mapToWalletHesoyam(preparedWallet, result);
+                .when(walletMapper).mapToWalletHesoyam(preparedWallet, result, 0L);
 
         WalletHesoyamDTO hesoyamDTO = service.hesoyam(id);
 
@@ -186,7 +186,7 @@ public class DefaultWalletServiceTest {
         verifyNoMoreInteractions(walletRepository);
         verify(hesoyamRouletteGenerator).call();
         verifyNoMoreInteractions(hesoyamRouletteGenerator);
-        verify(walletMapper).mapToWalletHesoyam(preparedWallet, result);
+        verify(walletMapper).mapToWalletHesoyam(preparedWallet, result, 0L);
         verifyNoMoreInteractions(walletMapper);
 
     }
