@@ -19,7 +19,7 @@ import java.util.List;
 @RestControllerAdvice
 public class ExceptionsHandler {
     @ExceptionHandler
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ServiceErrorResponse handleServiceException(ServiceException e) {
         return new ServiceErrorResponse(e.getMessage());
     }
