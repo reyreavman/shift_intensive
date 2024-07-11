@@ -20,7 +20,6 @@ import ru.cft.template.core.repository.InvoiceRepository;
 import ru.cft.template.core.service.transfer.TransferService;
 import ru.cft.template.core.service.user.UserService;
 
-import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -78,44 +77,38 @@ public class DefaultInvoiceService implements InvoiceService {
 
     @Override
     public List<InvoiceDataDTO> getUserInvoicesWithFilters(Long userId, InvoiceFilters filters) {
-        if (filters.getDirectionType().equals(InvoiceDirectionType.INCOMING))
-            return invoicesFiltersChain(invoiceRepository.findAllByRecipientId(userId).stream(), filters)
-                    .map(invoiceMapper::mapToInvoiceDataDTO)
-                    .toList();
-        return invoicesFiltersChain(invoiceRepository.findAllBySenderId(userId).stream(), filters)
+        return invoicesFiltersChain(invoiceRepository.findAllBySenderIdOrRecipientId(userId, userId).stream(), userId, filters)
                 .map(invoiceMapper::mapToInvoiceDataDTO)
                 .toList();
     }
 
     @Override
     public InvoiceTotalDTO getUserInvoicesTotalWithFilters(Long userId, InvoiceFilters filters) {
-        if (filters.getDirectionType().equals(InvoiceDirectionType.INCOMING)) {
-            long totalAmount = invoicesFiltersChain(invoiceRepository.findAllByRecipientId(userId).stream(), filters)
-                    .mapToLong(Invoice::getAmount).sum();
-            return invoiceMapper.mapToInvoiceTotalDTO(userId, filters, totalAmount);
-        }
-        long totalAmount = invoicesFiltersChain(invoiceRepository.findAllByRecipientId(userId).stream(), filters)
-                .mapToLong(Invoice::getAmount).sum();
-        return invoiceMapper.mapToInvoiceTotalDTO(userId, filters, totalAmount);
+        long totalAmount = invoicesFiltersChain(invoiceRepository.findAllBySenderIdOrRecipientId(userId, userId).stream(), userId, filters)
+                .mapToLong(Invoice::getAmount)
+                .sum();
+        return invoiceMapper.mapToInvoiceTotalDTO(userId, totalAmount);
     }
 
     @Override
     public InvoiceDataDTO getOldestUserInvoice(Long userId, InvoiceFilters filters) {
-        if (filters.getDirectionType().equals(InvoiceDirectionType.INCOMING)) {
-            Invoice oldestUserInvoice = invoicesFiltersChain(invoiceRepository.findByRecipientIdOrderByCreationDateTimeAsc(userId).stream(), filters)
-                    .findFirst().orElseThrow();
-            return invoiceMapper.mapToInvoiceDataDTO(oldestUserInvoice);
-        }
-        Invoice oldestUserInvoice = invoicesFiltersChain(invoiceRepository.findBySenderIdOrderByCreationDateTimeAsc(userId).stream(), filters)
+        Invoice oldestUserInvoice = invoicesFiltersChain(invoiceRepository.findBySenderIdOrRecipientIdOrderByCreationDateTimeAsc(userId, userId).stream(), userId, filters)
                 .findFirst().orElseThrow();
         return invoiceMapper.mapToInvoiceDataDTO(oldestUserInvoice);
     }
 
-    private Stream<Invoice> invoicesFiltersChain(Stream<Invoice> invoicesStream, InvoiceFilters filters) {
+    private Stream<Invoice> invoicesFiltersChain(Stream<Invoice> invoicesStream, Long userId, InvoiceFilters filters) {
         return invoicesStream
-                .filter(invoice -> Objects.isNull(filters.getStatus()) || invoice.getStatus().equals(filters.getStatus()))
-                .filter(invoice -> Objects.isNull(filters.getStart()) || invoice.getCreationDateTime().isAfter(ChronoLocalDateTime.from(filters.getStart())))
-                .filter(invoice -> Objects.isNull(filters.getEnd()) || invoice.getCreationDateTime().isBefore(ChronoLocalDateTime.from(filters.getEnd())));
+                .filter(invoice -> Objects.isNull(filters.getDirectionType()) ||
+                        filters.getDirectionType().equals(InvoiceDirectionType.INCOMING) ?
+                        invoice.getRecipient().getId().equals(userId) :
+                        invoice.getSender().getId().equals(userId))
+                .filter(invoice -> Objects.isNull(filters.getStatus()) ||
+                        invoice.getStatus().equals(filters.getStatus()))
+                .filter(invoice -> Objects.isNull(filters.getStart()) ||
+                        invoice.getCreationDateTime().toLocalDate().isAfter(filters.getStart()))
+                .filter(invoice -> Objects.isNull(filters.getEnd()) ||
+                        invoice.getCreationDateTime().toLocalDate().isBefore(filters.getEnd()));
     }
 
     private void validateInvoiceToPay(Invoice invoice, User recipient) {

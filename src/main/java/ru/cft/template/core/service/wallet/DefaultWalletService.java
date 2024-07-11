@@ -3,6 +3,7 @@ package ru.cft.template.core.service.wallet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.cft.template.api.dto.wallet.HesoyamResult;
 import ru.cft.template.api.dto.wallet.WalletDTO;
 import ru.cft.template.api.dto.wallet.WalletHesoyamDTO;
 import ru.cft.template.core.entity.Wallet;
@@ -42,7 +43,13 @@ public class DefaultWalletService implements WalletService {
     @Override
     @Transactional
     public WalletHesoyamDTO hesoyam(Long walletId) {
-        return walletMapper.mapToWalletHesoyam(findWalletById(walletId), this.hesoyamGenerator.call());
+        Long hesoyamWinnerAward = 10L;
+        Wallet wallet = findWalletById(walletId);
+        HesoyamResult hesoyamResult = hesoyamGenerator.call();
+        if (hesoyamResult.equals(HesoyamResult.WINNER)) {
+            wallet.setBalance(wallet.getBalance() + hesoyamWinnerAward);
+        }
+        return walletMapper.mapToWalletHesoyam(wallet, hesoyamResult, hesoyamWinnerAward);
     }
 
     private Wallet findWalletById(Long walletId) {
