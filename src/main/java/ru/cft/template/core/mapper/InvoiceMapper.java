@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import ru.cft.template.api.dto.invoice.CreateInvoiceDTO;
 import ru.cft.template.api.dto.invoice.InvoiceDataDTO;
 import ru.cft.template.api.dto.invoice.InvoiceTotalDTO;
-import ru.cft.template.api.dto.invoice.common.InvoiceFilters;
 import ru.cft.template.api.dto.invoice.common.InvoiceStatus;
 import ru.cft.template.core.entity.User;
 import ru.cft.template.core.entity.invoice.Invoice;
@@ -35,10 +34,9 @@ public class InvoiceMapper {
                 .build();
     }
 
-    public InvoiceTotalDTO mapToInvoiceTotalDTO(Long userId, InvoiceFilters filters, Long total) {
+    public InvoiceTotalDTO mapToInvoiceTotalDTO(Long userId, Long total) {
         return InvoiceTotalDTO.builder()
                 .userId(userId)
-                .filters(filters)
                 .total(total)
                 .build();
     }
